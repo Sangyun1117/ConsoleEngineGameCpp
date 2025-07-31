@@ -30,6 +30,9 @@
     <ClCompile Include="Level\HomeLevel.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="Settings\ObjectDefines.h">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor\Fighter.h">

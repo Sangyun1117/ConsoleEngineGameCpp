@@ -13,6 +13,9 @@ struct EngineSettings
 	// 콘솔 화면 세로 크기.
 	int height = 0;
 
+	//화면 중앙 좌표
+	Vector2 center;
+
 	// 타겟 프레임 속도.
 	float framerate = 0.0f;
 };
@@ -44,8 +47,9 @@ public:
 	static Engine& Get();
 
 	// 화면 가로/세로 크기 반환 함수.
-	int Width() const;
-	int Height() const;
+	int GetScreenWidth() const;
+	int GetScreenHeight() const;
+	const Vector2& GetScreenCenter() const;
 
 private:
 	void BeginPlay();
@@ -54,7 +58,8 @@ private:
 
 	// 엔진 설정 로드 함수.
 	void LoadEngineSettings();
-
+	//화면 세팅
+	void ScreenSettings();
 protected:
 	// 엔진 종료 플래그.
 	bool isQuit = false;

@@ -34,19 +34,42 @@ void HomeLevel::Render()
 	//메뉴 제목 출력
 	std::cout << "SokobanGame\n\n";
 
+	// 텍스트 시작 X 좌표 (중앙 맞춤)
+	const char* topLine = "┌──────────────────────────────────────────────────────────────────────────────────────────┐";
+	const Vector2& center = Engine::Get().GetScreenCenter();
+	int textLength = static_cast<int>(strlen(topLine));
+	int startX = center.x - textLength / 2;
+	int startY = center.y - 3; 
+
 	// 메뉴 아이템 렌더링.
-	for (int ix = 0; ix < length; ++ix)
-	{
-		// 아이템 색상 확인.
-		Color textColor =
-			(ix == currentIndex) ? selectedColor : unselectedColor;
+	Color textColor = (0 == currentIndex) ? selectedColor : unselectedColor;
+	// 색상 설정.
+	Utils::SetConsoleTextColor(static_cast<WORD>(textColor));
+	Vector2 pos = { startX, startY };
+	Utils::SetConsolePosition(pos);
+	// 메뉴 텍스트 출력.
+	std::cout << "┌──────────────────────────────────────────────────────────────────────────────────────────┐";
+	pos = { 10, 6 };
+	Utils::SetConsolePosition(pos);
+	std::cout << "│                                        GAME START                                        │";
+	pos = { 10, 7 };
+	Utils::SetConsolePosition(pos);
+	std::cout << "└──────────────────────────────────────────────────────────────────────────────────────────┘";
 
-		// 색상 설정.
-		Utils::SetConsoleTextColor(static_cast<WORD>(textColor));
-
-		// 메뉴 텍스트 출력.
-		std::cout << items[ix]->menuText << "\n";
-	}
+	// 메뉴 아이템 렌더링.
+	textColor = (1 == currentIndex) ? selectedColor : unselectedColor;
+	// 색상 설정.
+	Utils::SetConsoleTextColor(static_cast<WORD>(textColor));
+	pos = { 10, 10 };
+	Utils::SetConsolePosition(pos);
+	// 메뉴 텍스트 출력.
+	std::cout << "┌──────────────────────────────────────────────────────────────────────────────────────────┐";
+	pos = { 10, 11 };
+	Utils::SetConsolePosition(pos);
+	std::cout << "│                                          EXIT                                            │";
+	pos = { 10, 12 };
+	Utils::SetConsolePosition(pos);
+	std::cout << "└──────────────────────────────────────────────────────────────────────────────────────────┘";
 }
 
 void HomeLevel::Tick(float deltaTime)
