@@ -3,6 +3,9 @@
 #include "Core.h"
 #include "Input.h"
 #include <Windows.h>
+#include "Math/Vector2.h"
+#include "Render/ScreenBuffer.h"
+#include "Math/Color.h"
 
 // 엔진 설정 구조체.
 struct EngineSettings
@@ -12,9 +15,6 @@ struct EngineSettings
 
 	// 콘솔 화면 세로 크기.
 	int height = 0;
-
-	//화면 중앙 좌표
-	Vector2 center;
 
 	// 타겟 프레임 속도.
 	float framerate = 0.0f;
@@ -34,6 +34,9 @@ public:
 	// 엔진 실행 함수.
 	void Run();
 
+	// 문자열 그리기 요청 함수.
+	void WriteToBuffer(const Vector2& position, const char* image, Color color = Color::White);
+
 	// 레벨 추가 함수.
 	void AddLevel(Level* newLevel);
 
@@ -49,17 +52,32 @@ public:
 	// 화면 가로/세로 크기 반환 함수.
 	int GetScreenWidth() const;
 	int GetScreenHeight() const;
-	const Vector2& GetScreenCenter() const;
 
-private:
+protected:
 	void BeginPlay();
 	void Tick(float deltaTime = 0.0f);
+
+	// 화면 지우는 함수 (전체를 빈 문자열로 설정).
+	void Clear(); 
+	// 액터 그리기 함수 (백버퍼에 기록).
 	void Render();
+	// 버퍼 교환 함수 (프론트 버퍼 <-> 백버퍼)
+	void Present();
 
 	// 엔진 설정 로드 함수.
 	void LoadEngineSettings();
+
+	// 백버퍼 렌더 타겟 반환 함수.
+	ScreenBuffer* GetRenderer() const;
+
+	// 글자 버퍼 지우는 함수.
+	void ClearImageBuffer();
+
 	//화면 세팅
 	void ScreenSettings();
+
+	//빠른편집모드(마우스 클릭 시 드래그 가능) 끄기
+	void DisableQuickEditMode();
 protected:
 	// 엔진 종료 플래그.
 	bool isQuit = false;
@@ -72,6 +90,11 @@ protected:
 
 	// 엔진 설정.
 	EngineSettings settings;
+
+	//더블버퍼링을 위한 변수
+	CHAR_INFO* imageBuffer = nullptr; // 백버퍼(프레임).
+	ScreenBuffer* renderTargets[2] = { }; // 이중 버퍼.
+	int currentRenderTargetIndex = 0; // 백버퍼로 사용하는 렌더 타겟의 인덱스.
 
 	// 싱글톤 변수.
 	static Engine* instance;

@@ -4,8 +4,7 @@
 class Fighter : public Actor {
 	RTTI_DECLARATIONS(Fighter, Actor)
 public:
-	Fighter();
-	Fighter(int x, int y);
+	Fighter(int x = 0, int y = 0);
 
 	virtual void Tick(float deltaTime) override;
 private:

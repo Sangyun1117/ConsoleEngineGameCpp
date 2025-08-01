@@ -1,6 +1,7 @@
 #pragma once
 #include "Level/Level.h"
 #include "Math/Color.h"
+#include "Math/Vector2.h"
 #include <vector>
 
 struct MenuItem
@@ -36,7 +37,7 @@ public:
 
 private:
 	//현재 선택된 아이템의 인덱스
-	int currentIndex = 0;
+	int currentIndex = 0; //0이면 게임 시작, 1이면 나가기
 
 	//아이템 선택 색상
 	Color selectedColor = Color::Green;
@@ -47,5 +48,10 @@ private:
 
 	//메뉴 아이템 수
 	int length = 0;
+
+	Vector2 gameStartButtonLeftTopXY;
+	Vector2 gameStartButtonRightBottomXY;
+	Vector2 exitButtonLeftTopXY;
+	Vector2 exitButtonRightBottomXY;
 };
 

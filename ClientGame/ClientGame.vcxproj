@@ -163,6 +163,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Actor\Block.cpp" />
     <ClCompile Include="Actor\Fighter.cpp" />
     <ClCompile Include="Game\Game.cpp" />
     <ClCompile Include="Level\GameLevel.cpp" />
@@ -171,6 +172,7 @@
     <ClCompile Include="Settings\ObjectDefines.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Actor\Block.h" />
     <ClInclude Include="Actor\Fighter.h" />
     <ClInclude Include="Game\Game.h" />
     <ClInclude Include="Level\GameLevel.h" />

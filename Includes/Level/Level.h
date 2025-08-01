@@ -26,7 +26,7 @@ public:
 
 	// 추가 및 삭제 요청된 액터를 처리하는 함수.
 	void ProcessAddAndDestroyActors();
-
+	
 private:
 	void SortActorsBySortingOrder();
 

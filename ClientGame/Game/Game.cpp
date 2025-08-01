@@ -17,11 +17,6 @@ Game::~Game()
 
 void Game::ToggleMenu()
 {
-    // 화면 정리.
-// clear screen 명령어 실행.
-    //Utils::ClearScreen();
-    
-
     // 토글 처리.
     showHome = !showHome;
 

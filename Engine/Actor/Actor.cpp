@@ -7,13 +7,12 @@
 #include <iostream>
 #include <fstream>
 
-Actor::Actor(Color color, const Vector2& position)
-	: imageLink(imageLink), color(color), position(position)
+Actor::Actor(const std:: string & imageLink, Color color, const Vector2& position)
+	: imageLink(imageLink),color(color), position(position)
 {
-	std::string filepath = "../Images/Fighter.txt";
-	std::ifstream file(filepath); //파일을 읽어옴
+	std::ifstream file(imageLink); //파일을 읽어옴
 	if (!file.is_open()) {
-		std::cerr << "파일을 열 수 없습니다: " << filepath << std::endl;
+		std::cerr << "파일을 열 수 없습니다: " << imageLink << std::endl;
 		return;
 	}
 
@@ -41,15 +40,15 @@ void Actor::Tick(float deltaTime)
 
 // 그리기 함수.
 void Actor::Render()
-{	
+{
 	Vector2 actionPos = position;
 	// 색상 설정.
-	Utils::SetConsoleTextColor(color);
-	for (int i = 0; i < 20; ++i) {
-		Utils::SetConsolePosition(actionPos);
-		std::cout << image[i + actionLevel];
+	//Utils::SetConsoleTextColor(color);
+	for (int i = 0; i < 20 && i < image.size(); i++) {
+		const std::string line = image[i];
 		actionPos.y++;
-		//actionLevel = 0;
+		//line.c_str()은 char형의 주소반환. 새로운 메모리를 할당하는 것이 아닌 string을 가리키는 것. 따로 delete 하지 말기
+		Engine::Get().WriteToBuffer(actionPos, line.c_str(), color);
 	}
 }
 
@@ -61,7 +60,7 @@ void Actor::SetPosition(const Vector2& newPosition)
 		return;
 	}
 	//오른쪽 가장자리가 화면 오른쪽을 벗어났는지
-	if (newPosition.x + width - 1 > Engine::Get().GetScreenWidth()-25) {
+	if (newPosition.x + width - 1 > Engine::Get().GetScreenWidth() - 25) {
 		return;
 	}
 	//위쪽 가장자리가 화면 위를 벗어났는지

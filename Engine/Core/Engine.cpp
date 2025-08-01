@@ -36,13 +36,34 @@ Engine::Engine()
 		GetStdHandle(STD_OUTPUT_HANDLE),
 		&info
 	);
+	// 엔진 설정 로드.
+	LoadEngineSettings();
+
+	// 랜덤 종자값(seed) 설정.
+	srand(static_cast<unsigned int>(time(nullptr)));
+
+	// 이미지 버퍼 생성.
+	Vector2 screenSize(settings.width, settings.height);
+	imageBuffer = new CHAR_INFO[(screenSize.x + 1) * screenSize.y + 1];
+
+	// 버퍼 초기화 (문자 버퍼).
+	ClearImageBuffer();
+
+	// 두 개의 버퍼 생성.
+	renderTargets[0] = new ScreenBuffer(GetStdHandle(STD_OUTPUT_HANDLE), screenSize);
+	renderTargets[1] = new ScreenBuffer(screenSize);
+
+	// 버퍼 교환.
+	Present();
+
+	// 화면 세팅
+	ScreenSettings();
 
 	// 콘솔 창 이벤트 등록.
 	SetConsoleCtrlHandler(ConsoleMessageProcedure, TRUE);
-	// 엔진 설정 로드.
-	LoadEngineSettings();
-	// 화면 세팅
-	ScreenSettings();
+
+	//빠른 편집 모드 삭제
+	DisableQuickEditMode();
 }
 
 Engine::~Engine()
@@ -105,6 +126,7 @@ void Engine::Run()
 
 			// 현재 프레임의 입력을 기록.
 			input.SavePreviouseKeyStates();
+			input.SavePreviouseMouseStates();
 
 			// 이전 프레임에 추가 및 삭제 요청된 액터 처리.
 			if (mainLevel)
@@ -120,6 +142,23 @@ void Engine::Run()
 	);
 }
 
+void Engine::WriteToBuffer(const Vector2& position, const char* image, Color color)
+{
+	// 문자열 길이.
+	int length = static_cast<int>(strlen(image));
+
+	// 문자열 기록.
+	for (int ix = 0; ix < length; ++ix)
+	{
+		// 기록할 문자 위치.
+		int index = (position.y * (settings.width)) + position.x + ix;
+
+		// 버퍼에 문자/색상 기록.
+		imageBuffer[index].Char.AsciiChar = image[ix];
+		imageBuffer[index].Attributes = (WORD)color;
+	}
+}
+
 void Engine::AddLevel(Level* newLevel)
 {
 	// 기존에 있던 레벨은 제거.
@@ -133,7 +172,16 @@ void Engine::AddLevel(Level* newLevel)
 
 void Engine::CleanUp()
 {
+
+	// 렌더 타겟 삭제.
+	SafeDelete(renderTargets[0]);
+	SafeDelete(renderTargets[1]);
+
+	//레벨 삭제
 	SafeDelete(mainLevel);
+
+	// 문자 버퍼 삭제.
+	SafeDeleteArray(imageBuffer);
 }
 
 void Engine::Quit()
@@ -157,11 +205,6 @@ int Engine::GetScreenHeight() const
 	return settings.height;
 }
 
-const Vector2& Engine::GetScreenCenter() const
-{
-	return settings.center;
-}
-
 void Engine::BeginPlay()
 {
 	if (mainLevel)
@@ -178,16 +221,32 @@ void Engine::Tick(float deltaTime)
 	}
 }
 
+void Engine::Clear() {
+	ClearImageBuffer();
+	GetRenderer()->Clear();
+}
+
 void Engine::Render()
 {
-	Utils::SetConsoleTextColor(
-		FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED
-	);
-
+	//화면 지우기
+	Clear();
+	//레벨 그리기
 	if (mainLevel)
 	{
 		mainLevel->Render();
 	}
+	GetRenderer()->Render(imageBuffer);
+	//버퍼 교환
+	Present();
+}
+
+void Engine::Present()
+{
+	// 버퍼 교환.
+	SetConsoleActiveScreenBuffer(GetRenderer()->buffer);
+
+	// 인덱스 뒤집기. 1->0, 0->1.
+	currentRenderTargetIndex = 1 - currentRenderTargetIndex;
 }
 
 void Engine::LoadEngineSettings()
@@ -262,66 +321,112 @@ void Engine::LoadEngineSettings()
 	fclose(file);
 }
 
+//백버퍼를 반환한다.
+ScreenBuffer* Engine::GetRenderer() const
+{
+	return renderTargets[currentRenderTargetIndex];
+}
+
+void Engine::ClearImageBuffer()
+{
+	// 글자 버퍼 덮어쓰기.
+	for (int y = 0; y < settings.height; ++y)
+	{
+		for (int x = 0; x < settings.width; ++x)
+		{
+			CHAR_INFO& buffer = imageBuffer[(y * (settings.width + 1)) + x];
+			buffer.Char.AsciiChar = ' ';
+			buffer.Attributes = 0;
+		}
+
+		// 각 줄 끝에 개행 문자 추가.
+		CHAR_INFO& buffer = imageBuffer[(y * (settings.width + 1)) + settings.width];
+		buffer.Char.AsciiChar = '\n';
+		buffer.Attributes = 0;
+	}
+
+	// 마지막에 널 문자 추가.
+	CHAR_INFO& buffer = imageBuffer[(settings.width + 1) * settings.height];
+	buffer.Char.AsciiChar = '\0';
+	buffer.Attributes = 0;
+}
+
 void Engine::ScreenSettings()
 {
-	HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+	for (int i = 0; i < 2; ++i) {
+		HANDLE hOut = renderTargets[i]->GetHandle();
 
-	// 1. 버퍼 크기 설정
-	COORD bufferSize = { static_cast<SHORT>(settings.width), static_cast<SHORT>(settings.height) };
-	if (!SetConsoleScreenBufferSize(hOut, bufferSize))
-	{
-		std::cerr << "SetConsoleScreenBufferSize 실패\n";
-		return;
+		// 1. 윈도우 창 크기를 가장 작게 설정. 윈도우 창이 버퍼보다 크면 오류가 남.
+		SMALL_RECT tempWindow = { 0,0,1,1 };
+		SetConsoleWindowInfo(hOut, TRUE, &tempWindow);
+
+		// 2. 버퍼 크기 설정
+		COORD bufferSize = { static_cast<SHORT>(settings.width), static_cast<SHORT>(settings.height) };
+		if (!SetConsoleScreenBufferSize(hOut, bufferSize))
+		{
+			std::cerr << "SetConsoleScreenBufferSize 실패 buffer" << i << "\n";
+			continue;
+		}
+
+		// 3. 콘솔 창 크기 설정
+		SMALL_RECT windowSize = { 0, 0, static_cast<SHORT>(settings.width - 1), static_cast<SHORT>(settings.height - 1) };
+		if (!SetConsoleWindowInfo(hOut, TRUE, &windowSize))
+		{
+			std::cerr << "SetConsoleWindowInfo 실패\n";
+			return;
+		}
+
+		if (i == 0) {
+			// 4. 콘솔 창 중앙으로 이동
+			HWND consoleWindow = GetConsoleWindow();
+			if (consoleWindow == nullptr) {
+				std::cerr << "콘솔 창 핸들을 가져올 수 없습니다.\n";
+				return;
+			}
+
+			// 현재 콘솔 폰트의 픽셀 크기 얻기
+			CONSOLE_FONT_INFO fontInfo;
+			if (!GetCurrentConsoleFont(hOut, FALSE, &fontInfo)) {
+				std::cerr << "콘솔 폰트 정보 가져오기 실패\n";
+				return;
+			}
+
+			COORD fontSize = GetConsoleFontSize(hOut, fontInfo.nFont); // 픽셀 단위
+
+			// 클라이언트 영역 크기 (콘솔 화면 기준)
+			int clientWidth = fontSize.X * settings.width;
+			int clientHeight = fontSize.Y * settings.height;
+
+			// 전체 윈도우 크기로 확장
+			RECT windowRect = { 0, 0, clientWidth, clientHeight };
+			if (!AdjustWindowRect(&windowRect, GetWindowLong(consoleWindow, GWL_STYLE), FALSE)) {
+				std::cerr << "AdjustWindowRect 실패\n";
+				return;
+			}
+
+			int totalWindowWidth = windowRect.right - windowRect.left;
+			int totalWindowHeight = windowRect.bottom - windowRect.top;
+
+			// 모니터 중앙 좌표 계산
+			int screenWidth = GetSystemMetrics(SM_CXSCREEN);
+			int screenHeight = GetSystemMetrics(SM_CYSCREEN);
+			int x = (screenWidth - totalWindowWidth) / 2;
+			int y = (screenHeight - totalWindowHeight) / 2;
+
+			// 콘솔 창 이동 및 크기 설정
+			MoveWindow(consoleWindow, x, y, totalWindowWidth, totalWindowHeight, TRUE);
+
+		}
 	}
+}
 
-	// 2. 콘솔 창 크기 설정
-	SMALL_RECT windowSize = { 0, 0, static_cast<SHORT>(settings.width - 1), static_cast<SHORT>(settings.height - 1) };
-	if (!SetConsoleWindowInfo(hOut, TRUE, &windowSize))
-	{
-		std::cerr << "SetConsoleWindowInfo 실패\n";
-		return;
-	}
-
-	// 3. 콘솔 창 중앙으로 이동
-	HWND consoleWindow = GetConsoleWindow();
-	if (consoleWindow == nullptr) {
-		std::cerr << "콘솔 창 핸들을 가져올 수 없습니다.\n";
-		return;
-	}
-
-	// 현재 콘솔 폰트의 픽셀 크기 얻기
-	CONSOLE_FONT_INFO fontInfo;
-	if (!GetCurrentConsoleFont(hOut, FALSE, &fontInfo)) {
-		std::cerr << "콘솔 폰트 정보 가져오기 실패\n";
-		return;
-	}
-
-	COORD fontSize = GetConsoleFontSize(hOut, fontInfo.nFont); // 픽셀 단위
-
-	// 클라이언트 영역 크기 (콘솔 화면 기준)
-	int clientWidth = fontSize.X * settings.width;
-	int clientHeight = fontSize.Y * settings.height;
-
-	// 전체 윈도우 크기로 확장
-	RECT windowRect = { 0, 0, clientWidth, clientHeight };
-	if (!AdjustWindowRect(&windowRect, GetWindowLong(consoleWindow, GWL_STYLE), FALSE)) {
-		std::cerr << "AdjustWindowRect 실패\n";
-		return;
-	}
-
-	int totalWindowWidth = windowRect.right - windowRect.left;
-	int totalWindowHeight = windowRect.bottom - windowRect.top;
-
-	// 모니터 중앙 좌표 계산
-	int screenWidth = GetSystemMetrics(SM_CXSCREEN);
-	int screenHeight = GetSystemMetrics(SM_CYSCREEN);
-	int x = (screenWidth - totalWindowWidth) / 2;
-	int y = (screenHeight - totalWindowHeight) / 2;
-
-	// 콘솔 창 이동 및 크기 설정
-	MoveWindow(consoleWindow, x, y, totalWindowWidth, totalWindowHeight, TRUE);
-
-	settings.center.x = x;
-	settings.center.y = y;
+void Engine::DisableQuickEditMode()
+{
+	HANDLE hInput = GetStdHandle(STD_INPUT_HANDLE);
+	DWORD mode;
+	GetConsoleMode(hInput, &mode);
+	mode &= ~ENABLE_QUICK_EDIT_MODE;
+	mode &= ~ENABLE_INSERT_MODE;
+	SetConsoleMode(hInput, mode);
 }
 

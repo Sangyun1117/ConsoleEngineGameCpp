@@ -2,16 +2,11 @@
 #include "Engine.h"
 #include "Settings/ActionDefines.h"
 
-Fighter::Fighter() : Actor(Color::Blue)
-{
-	actionLevel = ACTION_IDLE;
-	SetPosition(Vector2(10, 5));
-}
-
-Fighter::Fighter(int x, int y)
+Fighter::Fighter(int x, int y) : Actor("../Assets/Images/Fighter.txt", Color::Blue)
 {
 	actionLevel = ACTION_IDLE;
 	SetPosition(Vector2(x, y));
+	SetSortingOrder(10);
 }
 
 void Fighter::Tick(float deltaTime)

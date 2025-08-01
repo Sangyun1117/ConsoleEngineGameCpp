@@ -33,6 +33,9 @@
     <ClCompile Include="Settings\ObjectDefines.h">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="Actor\Block.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor\Fighter.h">
@@ -48,6 +51,9 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Level\HomeLevel.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor\Block.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

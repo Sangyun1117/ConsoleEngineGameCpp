@@ -32,50 +32,52 @@ void HomeLevel::Render()
 	Utils::SetConsoleTextColor(static_cast<WORD>(unselectedColor));
 
 	//메뉴 제목 출력
-	std::cout << "SokobanGame\n\n";
+	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
-	// 텍스트 시작 X 좌표 (중앙 맞춤)
-	const char* topLine = "┌──────────────────────────────────────────────────────────────────────────────────────────┐";
-	const Vector2& center = Engine::Get().GetScreenCenter();
+	const char* topLine = "┌─────────────────────────────────────────┐";
+	const char* underLine = "└─────────────────────────────────────────┘";
+	const char* startLine = "│                                    GAME START                                    │";
+	const char* exitLine = "│                                       EXIT                                       │";
+
+	// 중앙값 좌표 구하기
 	int textLength = static_cast<int>(strlen(topLine));
-	int startX = center.x - textLength / 2;
-	int startY = center.y - 3; 
+	int startX = (Engine::Get().GetScreenWidth() - textLength) / 2;
+	int startY = (Engine::Get().GetScreenHeight() / 2) - 3 ;
+	
+	//버튼 좌표 저장
+	gameStartButtonLeftTopXY.x = startX;
+	gameStartButtonLeftTopXY.y = startY;
+	gameStartButtonRightBottomXY.x = startX + strlen(topLine);
+	gameStartButtonRightBottomXY.y = startY + 2;
 
 	// 메뉴 아이템 렌더링.
 	Color textColor = (0 == currentIndex) ? selectedColor : unselectedColor;
-	// 색상 설정.
-	Utils::SetConsoleTextColor(static_cast<WORD>(textColor));
-	Vector2 pos = { startX, startY };
-	Utils::SetConsolePosition(pos);
-	// 메뉴 텍스트 출력.
-	std::cout << "┌──────────────────────────────────────────────────────────────────────────────────────────┐";
-	pos = { 10, 6 };
-	Utils::SetConsolePosition(pos);
-	std::cout << "│                                        GAME START                                        │";
-	pos = { 10, 7 };
-	Utils::SetConsolePosition(pos);
-	std::cout << "└──────────────────────────────────────────────────────────────────────────────────────────┘";
+
+	Engine::Get().WriteToBuffer({ startX, startY }, topLine, textColor);
+	Engine::Get().WriteToBuffer({ startX, startY+1 }, startLine, textColor);
+	Engine::Get().WriteToBuffer({ startX, startY+2 }, underLine, textColor);
+
+	startY += 5;//y값 올려서 버튼 간의 간격 조절
+	
+	//버튼 좌표 저장
+	exitButtonLeftTopXY.x = startX;
+	exitButtonLeftTopXY.y = startY;
+	exitButtonRightBottomXY.x = startX + strlen(topLine);
+	exitButtonRightBottomXY.y = startY + 2;
 
 	// 메뉴 아이템 렌더링.
 	textColor = (1 == currentIndex) ? selectedColor : unselectedColor;
-	// 색상 설정.
-	Utils::SetConsoleTextColor(static_cast<WORD>(textColor));
-	pos = { 10, 10 };
-	Utils::SetConsolePosition(pos);
-	// 메뉴 텍스트 출력.
-	std::cout << "┌──────────────────────────────────────────────────────────────────────────────────────────┐";
-	pos = { 10, 11 };
-	Utils::SetConsolePosition(pos);
-	std::cout << "│                                          EXIT                                            │";
-	pos = { 10, 12 };
-	Utils::SetConsolePosition(pos);
-	std::cout << "└──────────────────────────────────────────────────────────────────────────────────────────┘";
+
+	Engine::Get().WriteToBuffer({ startX, startY }, topLine, textColor);
+	Engine::Get().WriteToBuffer({ startX, startY+1 }, exitLine, textColor);
+	Engine::Get().WriteToBuffer({ startX, startY+2 }, underLine, textColor);
+
 }
 
 void HomeLevel::Tick(float deltaTime)
 {
 	super::Tick(deltaTime);
-	// 입력 처리.
+	//키보드 입력 처리.
 	if (Input::Get().GetKeyDown(VK_UP))
 	{
 		currentIndex = (currentIndex - 1 + length) % length;
@@ -86,8 +88,7 @@ void HomeLevel::Tick(float deltaTime)
 		currentIndex = (currentIndex + 1) % length;
 	}
 
-	// Enter 키 입력.
-	if (Input::Get().GetKeyDown(VK_RETURN))
+	if (Input::Get().GetKeyDown(VK_RETURN))	// Enter 키 입력.
 	{
 		// 메뉴 아이템이 저장하고 있는 함수 호출.
 		items[currentIndex]->onSelected();
@@ -100,4 +101,22 @@ void HomeLevel::Tick(float deltaTime)
 		currentIndex = 0;
 	}
 
+	//마우스 입력 처리
+	if (Input::Get().GetMouseLeftDown() &&
+		Input::Get().IsMouseOver({ gameStartButtonLeftTopXY.x, gameStartButtonLeftTopXY.y }, { gameStartButtonRightBottomXY.x, gameStartButtonRightBottomXY.y }))
+	{
+		if(currentIndex == 0)
+			items[0]->onSelected();
+		else
+			currentIndex = 0;
+	}
+
+	if (Input::Get().GetMouseLeftDown() &&
+		Input::Get().IsMouseOver({ exitButtonLeftTopXY.x, exitButtonLeftTopXY.y }, { exitButtonRightBottomXY.x, exitButtonRightBottomXY.y }))
+	{
+		if (currentIndex == 1)
+			items[1]->onSelected();
+		else
+			currentIndex = 1;
+	}
 }

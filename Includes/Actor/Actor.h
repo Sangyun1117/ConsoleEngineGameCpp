@@ -16,6 +16,7 @@ class Engine_API Actor : public RTTI
 
 public:
 	Actor(
+		const std::string& imageLink,
 		Color color = Color::White,
 		const Vector2& position = Vector2::Zero
 	);
@@ -61,7 +62,7 @@ protected:
 
 	//이미지 (아스키 아트)
 	std::vector<std::string> image;
-	const std::string imageLink;
+	std::string imageLink;
 
 	int actionLevel = 0;
 
