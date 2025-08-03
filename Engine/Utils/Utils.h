@@ -22,18 +22,6 @@ namespace Utils
 		return GetStdHandle(STD_OUTPUT_HANDLE);
 	}
 
-	// 콘솔 커서 위치 이동 함수.
-	inline void SetConsolePosition(COORD coord)
-	{
-		static HANDLE handle = GetConsoleHandle();
-		SetConsoleCursorPosition(handle, coord);
-	}
-
-	inline void SetConsolePosition(const Vector2& position)
-	{
-		SetConsolePosition(static_cast<COORD>(position));
-	}
-
 	// 콘솔 텍스트 색상 설정 함수.
 	inline void SetConsoleTextColor(WORD color)
 	{
@@ -46,5 +34,4 @@ namespace Utils
 		SetConsoleTextColor(static_cast<WORD>(color));
 	}
 
-	void ClearScreen();
 }

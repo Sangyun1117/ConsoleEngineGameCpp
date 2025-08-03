@@ -36,13 +36,14 @@ public:
 	virtual void Render() override;
 
 private:
-	//현재 선택된 아이템의 인덱스
-	int currentIndex = 0; //0이면 게임 시작, 1이면 나가기
-
 	//아이템 선택 색상
-	Color selectedColor = Color::Green;
+	bool isHoverGameStart = false;
+	bool isHoverExit = false;
+	Color selectedTextColor = Color::Green;
+	Color selectedBagroundColor = Color::Blue;
 	//아이템 선택 안됐을 때 색상
-	Color unselectedColor = Color::White;
+	Color unselectedTextColor = Color::White;
+	Color unselectedBagroundColor = Color::Gray;
 	//아아템 배열
 	std::vector<MenuItem*> items;
 

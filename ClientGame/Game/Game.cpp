@@ -35,6 +35,11 @@ void Game::ToggleMenu()
     }
 }
 
+void Game::WriteToBuffer(const Vector2& position, const std::vector<std::string> image, Color fgColor, Color bgColor)
+{
+
+}
+
 void Game::CleanUp()
 {
 	if (showHome) {

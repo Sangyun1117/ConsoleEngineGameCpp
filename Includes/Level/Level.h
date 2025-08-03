@@ -3,6 +3,7 @@
 #include "Core.h"
 #include <vector>	// 크기가 알아서 변경되는 동적 배열.
 #include "RTTI.h"
+#include "UI/UIElement.h"
 
 class Actor;
 class Engine_API Level : public RTTI
@@ -26,8 +27,10 @@ public:
 
 	// 추가 및 삭제 요청된 액터를 처리하는 함수.
 	void ProcessAddAndDestroyActors();
-	
-private:
+
+	//UI추가 함수
+	void AddUI(UIElement* newUI);
+protected:
 	void SortActorsBySortingOrder();
 
 protected:
@@ -39,4 +42,7 @@ protected:
 
 	// 삭제 요청된 액터를 관리하는 배열.
 	std::vector<Actor*> destroyRequstedActors;
+
+	//레벨에 배치된 모든 UI를 관리하는 배열
+	std::vector<UIElement*> uiElements;
 };

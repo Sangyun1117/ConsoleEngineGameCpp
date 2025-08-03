@@ -164,20 +164,22 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Actor\Block.cpp" />
-    <ClCompile Include="Actor\Fighter.cpp" />
+    <ClCompile Include="Actor\Player.cpp" />
     <ClCompile Include="Game\Game.cpp" />
     <ClCompile Include="Level\GameLevel.cpp" />
     <ClCompile Include="Level\HomeLevel.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Settings\ObjectDefines.h" />
+    <ClCompile Include="UI\PlayerHpUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor\Block.h" />
-    <ClInclude Include="Actor\Fighter.h" />
+    <ClInclude Include="Actor\Player.h" />
     <ClInclude Include="Game\Game.h" />
     <ClInclude Include="Level\GameLevel.h" />
     <ClInclude Include="Level\HomeLevel.h" />
     <ClInclude Include="Settings\ActionDefines.h" />
+    <ClInclude Include="UI\PlayerHpUI.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -42,6 +42,9 @@
     <ClInclude Include="Render\ScreenBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="UI\UIElement.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core\Engine.cpp">
@@ -59,10 +62,10 @@
     <ClCompile Include="Core\Input.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Utils\Utils.cpp">
+    <ClCompile Include="Render\ScreenBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Render\ScreenBuffer.cpp">
+    <ClCompile Include="UI\UIElement.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

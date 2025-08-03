@@ -41,64 +41,33 @@ void Actor::Tick(float deltaTime)
 // 그리기 함수.
 void Actor::Render()
 {
-	Vector2 actionPos = position;
-	// 색상 설정.
-	//Utils::SetConsoleTextColor(color);
-	for (int i = 0; i < 20 && i < image.size(); i++) {
+	Vector2 actorPos = { position.x - Engine::Get().cameraPos.x, position.y - Engine::Get().cameraPos.y };
+
+	for (int i = 0; i < 10 && i < image.size(); i++) {
+		Vector2 drawPos = { actorPos.x, actorPos.y + i };
+		// 화면 밖이면 그리지 않음
+		if (drawPos.x < 0 || drawPos.x >= Engine::Get().GetScreenWidth() ||
+			drawPos.y < 0 || drawPos.y >= Engine::Get().GetScreenHeight())
+		{
+			continue;
+		}
+
 		const std::string line = image[i];
-		actionPos.y++;
 		//line.c_str()은 char형의 주소반환. 새로운 메모리를 할당하는 것이 아닌 string을 가리키는 것. 따로 delete 하지 말기
-		Engine::Get().WriteToBuffer(actionPos, line.c_str(), color);
+		Engine::Get().WriteToBuffer(drawPos, line.c_str(), color);
 	}
 }
 
 void Actor::SetPosition(const Vector2& newPosition)
 {
-	//예외 처리(화면 벗어났는지 확인)
-	//왼쪽 가장자리가 화면 왼쪽을 벗어났는지
-	if (newPosition.x < 0) {
-		return;
-	}
-	//오른쪽 가장자리가 화면 오른쪽을 벗어났는지
-	if (newPosition.x + width - 1 > Engine::Get().GetScreenWidth() - 25) {
-		return;
-	}
-	//위쪽 가장자리가 화면 위를 벗어났는지
-	if (newPosition.y < 0) {
-		return;
-	}
-	//화면 아래를 벗어났는지
-	if (newPosition.y - 1 > Engine::Get().GetScreenHeight()) {
-		return;
-	}
-
-	// 같으면 업데이트 안함.
-	if (position == newPosition)
-	{
-		return;
-	}
-
-	// 지울 위치 확인.
-	Vector2 direction = newPosition - position;
-	position.x = direction.x >= 0 ? position.x : position.x + width - 1;
-
-	// 커서 이동.
-	Utils::SetConsolePosition(position);
-
-	// 문자열 길이 고려해서 지울 위치 확인해야 함.
-	std::cout << ' ';
-
 	position = newPosition;
 }
-
-Vector2 Actor::Position() const
+void Actor::SetPosition(int x, int y) {
+	position = { x,y };
+}
+Vector2 Actor::GetPosition() const
 {
 	return position;
-}
-
-int Actor::Width() const
-{
-	return width;
 }
 
 void Actor::SetSortingOrder(unsigned int sortingOrder)
@@ -118,10 +87,16 @@ Level* Actor::GetOwner()
 
 void Actor::Destroy()
 {
+	// 중복 삭제 방지 처리.
+	if (isExpired)
+	{
+		return;
+	}
+
 	// 삭제 요청 되었다고 설정.
 	isExpired = true;
 
-	//레벨에 삭제 요청
+	// 레벨에 삭제 요청.
 	owner->DestroyActor(this);
 }
 

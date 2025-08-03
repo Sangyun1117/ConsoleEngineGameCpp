@@ -1,6 +1,17 @@
 #pragma once
 
-#define FIGHTER_WIDTH   25
-#define ACTION_ATTACK   20
-#define ACTION_MOVE		40
-#define ACTION_DIE      60
+//사이즈
+#define MAP_WIDTH 32
+#define MAP_HEIGHT 16 
+
+#define PLAYER_WIDTH 16
+#define PLAYER_HEIGHT 10
+
+#define BLOCKSIZE_WIDTH 10
+#define BLOCKSIZE_HEIGHT 5
+
+//아이템
+#define ITEM_HAND 0
+#define ITEM_PICKAXE 1
+#define ITEM_SOARD 2
+#define ITEM_GRASS_BLOCK 3

@@ -8,6 +8,18 @@
 
 // 정적 변수 초기화.
 Engine* Engine::instance = nullptr;
+bool g_isQuitByConsole = false;//x버튼을 눌렀을 경우 안전하게 종료 위해 사용
+
+BOOL WINAPI Engine::ConsoleHandler(DWORD signal)
+{
+	if (signal == CTRL_CLOSE_EVENT || signal == CTRL_LOGOFF_EVENT || signal == CTRL_SHUTDOWN_EVENT)
+	{
+		g_isQuitByConsole = true;
+		return TRUE;
+	}
+
+	return FALSE;
+}
 
 BOOL WINAPI ConsoleMessageProcedure(DWORD CtrlType)
 {
@@ -68,7 +80,7 @@ Engine::Engine()
 
 Engine::~Engine()
 {
-	CleanUp();
+	//CleanUp();
 }
 
 void Engine::Run()
@@ -96,7 +108,7 @@ void Engine::Run()
 	while (true)
 	{
 		// 엔진 종료 여부 확인.
-		if (isQuit)
+		if (isQuit || g_isQuitByConsole)
 		{
 			// 루프 종료.
 			break;
@@ -107,9 +119,9 @@ void Engine::Run()
 		QueryPerformanceCounter(&currentTime);
 
 		// 프레임 시간.
-		float deltaTime =
-			(currentTime.QuadPart - previousTime.QuadPart)
-			/ (float)frequency.QuadPart;
+		float deltaTime = (currentTime.QuadPart - previousTime.QuadPart) / (float)frequency.QuadPart;
+
+		this->deltaTime = deltaTime;
 
 		// 입력은 최대한 빨리.
 		input.ProcessInput();
@@ -133,6 +145,7 @@ void Engine::Run()
 			{
 				mainLevel->ProcessAddAndDestroyActors();
 			}
+
 		}
 	}
 
@@ -140,22 +153,28 @@ void Engine::Run()
 	Utils::SetConsoleTextColor(
 		FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED
 	);
+
+	//종료시 소멸자에서 호출하면 버그나서 한 번 run 종료 후로 바꿔봄. run 루프 중에 갑자기 이미지 버퍼가 사라지는 경우 방지
+	CleanUp();
 }
 
-void Engine::WriteToBuffer(const Vector2& position, const char* image, Color color)
+void Engine::WriteToBuffer(const Vector2& position, const char* image, Color fgColor, Color bgColor)
 {
-	// 문자열 길이.
 	int length = static_cast<int>(strlen(image));
 
-	// 문자열 기록.
 	for (int ix = 0; ix < length; ++ix)
 	{
-		// 기록할 문자 위치.
-		int index = (position.y * (settings.width)) + position.x + ix;
+		int x = position.x + ix;
+		int y = position.y;
 
-		// 버퍼에 문자/색상 기록.
+		// 콘솔 화면 범위 밖이면 건너뜀
+		if (x < 0 || x >= settings.width || y < 0 || y >= settings.height)
+			continue;
+
+		int index = (y * settings.width) + x;
+
 		imageBuffer[index].Char.AsciiChar = image[ix];
-		imageBuffer[index].Attributes = (WORD)color;
+		imageBuffer[index].Attributes = (WORD)fgColor | ((WORD)bgColor << 4);
 	}
 }
 

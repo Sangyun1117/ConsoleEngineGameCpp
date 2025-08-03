@@ -187,6 +187,7 @@ xcopy $(OutDir)\Engine.dll ..\Lib\Engine\ /y</Command>
     <ClInclude Include="Level\Level.h" />
     <ClInclude Include="Math\Vector2.h" />
     <ClInclude Include="Render\ScreenBuffer.h" />
+    <ClInclude Include="UI\UIElement.h" />
     <ClInclude Include="Utils\Utils.h" />
   </ItemGroup>
   <ItemGroup>
@@ -196,7 +197,7 @@ xcopy $(OutDir)\Engine.dll ..\Lib\Engine\ /y</Command>
     <ClCompile Include="Level\Level.cpp" />
     <ClCompile Include="Math\Vector2.cpp" />
     <ClCompile Include="Render\ScreenBuffer.cpp" />
-    <ClCompile Include="Utils\Utils.cpp" />
+    <ClCompile Include="UI\UIElement.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

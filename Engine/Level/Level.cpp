@@ -17,6 +17,12 @@ Level::~Level()
 
 	// std::vector 정리.
 	actors.clear();
+
+	for (UIElement* ui : uiElements)
+	{
+		SafeDelete(ui);
+	}
+	uiElements.clear();
 }
 
 // 레벨에 액터를 추가할 때 사용.
@@ -26,7 +32,7 @@ void Level::AddActor(Actor* newActor)
 	addRequstedActors.emplace_back(newActor);
 	
 	// 오너십 설정.
-	//newActor->SetOwner(this);
+	newActor->SetOwner(this);
 }
 
 void Level::DestroyActor(Actor* destroyedActor)
@@ -95,7 +101,7 @@ void Level::Render()
 			}
 
 			// 위치가 같은 액터 확인.
-			if (actor->Position() == otherActor->Position())
+			if (actor->GetPosition() == otherActor->GetPosition())
 			{
 				// 정렬 순서 비교 후 액터 저장.
 				if (actor->sortingOrder < otherActor->sortingOrder)
@@ -113,10 +119,17 @@ void Level::Render()
 		{
 			continue;
 		}
-		//Utils::ClearScreen();
 		// 드로우 콜.
 		actor->Render();
 	}
+
+	// UI 렌더링
+	for (UIElement* const ui : uiElements)
+	{
+		if (!ui->isVisible) continue;
+		ui->Render();
+	}
+
 }
 
 void Level::ProcessAddAndDestroyActors()
@@ -139,15 +152,6 @@ void Level::ProcessAddAndDestroyActors()
 	// destroyRequstedActors 배열을 순회하면서 액터 delete.
 	for (auto* actor : destroyRequstedActors)
 	{
-		// 액터가 그렸던 곳 지우기.
-		Utils::SetConsolePosition(actor->position);
-
-		// 콘솔에 빈문자 출력해서 지우기.
-		for (int ix = 0; ix < actor->width; ++ix)
-		{
-			std::cout << " ";
-		}
-
 		// 리소스 해제.
 		SafeDelete(actor);
 	}
@@ -164,6 +168,11 @@ void Level::ProcessAddAndDestroyActors()
 
 	// 배열 초기화.
 	addRequstedActors.clear();
+}
+
+void Level::AddUI(UIElement* newUI)
+{
+	uiElements.push_back(newUI);
 }
 
 void Level::SortActorsBySortingOrder()

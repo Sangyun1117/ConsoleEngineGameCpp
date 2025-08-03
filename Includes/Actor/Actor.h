@@ -38,14 +38,12 @@ public:
 
 	// 위치 설정/값 읽는 함수.
 	void SetPosition(const Vector2& newPosition);
-	Vector2 Position() const;
-
-	// 문자열 길이 반환.
-	int Width() const;
+	void SetPosition(int x, int y);
+	Vector2 GetPosition() const;
 
 	// Sorting Order 설정.
 	void SetSortingOrder(unsigned int sortingOrder);
-
+	unsigned int GetSortingOrder() { return sortingOrder; }
 	// 오너십 설정.
 	void SetOwner(Level* newOwner);
 	Level* GetOwner();
@@ -55,6 +53,14 @@ public:
 
 	// 게임 종료 요청 함수.
 	void QuitGame();
+
+public:
+	// 액터가 활성 상태인지 알려주는 변수.
+	bool isActive = true;
+
+	// 삭제 요청됐는지 알려주는 변수.
+	bool isExpired = false;
+	// 정렬 순서.
 
 protected:
 	// 개체의 위치.
@@ -75,14 +81,7 @@ protected:
 	// BeginPlay 호출이 되었는지 확인.
 	bool hasBeganPlay = false;
 
-	// 정렬 순서.
 	unsigned int sortingOrder = 0;
-
-	// 액터가 활성 상태인지 알려주는 변수.
-	bool isActive = true;
-
-	// 삭제 요청됐는지 알려주는 변수.
-	bool isExpired = false;
 
 	// 소유 레벨(오너십).
 	Level* owner = nullptr;

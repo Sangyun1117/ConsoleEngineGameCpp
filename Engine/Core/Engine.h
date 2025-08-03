@@ -35,7 +35,7 @@ public:
 	void Run();
 
 	// 문자열 그리기 요청 함수.
-	void WriteToBuffer(const Vector2& position, const char* image, Color color = Color::White);
+	void WriteToBuffer(const Vector2& position, const char* image, Color fgColor = Color::White, Color bgColor = Color::Black);
 
 	// 레벨 추가 함수.
 	void AddLevel(Level* newLevel);
@@ -53,6 +53,10 @@ public:
 	int GetScreenWidth() const;
 	int GetScreenHeight() const;
 
+	//프레임 시간을 넘겨줌
+	float GetDeltaTime() const { return deltaTime; }
+
+	static BOOL WINAPI ConsoleHandler(DWORD signal);
 protected:
 	void BeginPlay();
 	void Tick(float deltaTime = 0.0f);
@@ -78,10 +82,12 @@ protected:
 
 	//빠른편집모드(마우스 클릭 시 드래그 가능) 끄기
 	void DisableQuickEditMode();
+public:
+	Vector2 cameraPos = { 0,0 };
 protected:
 	// 엔진 종료 플래그.
 	bool isQuit = false;
-
+	
 	// 메인 레벨.
 	Level* mainLevel = nullptr;
 
@@ -95,6 +101,10 @@ protected:
 	CHAR_INFO* imageBuffer = nullptr; // 백버퍼(프레임).
 	ScreenBuffer* renderTargets[2] = { }; // 이중 버퍼.
 	int currentRenderTargetIndex = 0; // 백버퍼로 사용하는 렌더 타겟의 인덱스.
+	
+
+	//애니메이션을 위한 시간을 넘겨주기위한 변수
+	float deltaTime = 0.0f;
 
 	// 싱글톤 변수.
 	static Engine* instance;

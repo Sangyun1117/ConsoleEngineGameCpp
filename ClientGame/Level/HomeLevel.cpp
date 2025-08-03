@@ -27,10 +27,6 @@ HomeLevel::~HomeLevel()
 
 void HomeLevel::Render()
 {
-	// 색상 & 좌표 정리.
-	Utils::SetConsolePosition(Vector2::Zero);
-	Utils::SetConsoleTextColor(static_cast<WORD>(unselectedColor));
-
 	//메뉴 제목 출력
 	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
@@ -51,11 +47,11 @@ void HomeLevel::Render()
 	gameStartButtonRightBottomXY.y = startY + 2;
 
 	// 메뉴 아이템 렌더링.
-	Color textColor = (0 == currentIndex) ? selectedColor : unselectedColor;
-
-	Engine::Get().WriteToBuffer({ startX, startY }, topLine, textColor);
-	Engine::Get().WriteToBuffer({ startX, startY+1 }, startLine, textColor);
-	Engine::Get().WriteToBuffer({ startX, startY+2 }, underLine, textColor);
+	Color buttonTextColor = isHoverGameStart ? Color::Red : Color::BrightBlue;
+	Color buttonBackgroundColor = isHoverGameStart ? Color::Yellow : Color::Green;
+	Engine::Get().WriteToBuffer({ startX, startY }, topLine, buttonTextColor, buttonBackgroundColor);
+	Engine::Get().WriteToBuffer({ startX, startY+1 }, startLine, buttonTextColor, buttonBackgroundColor);
+	Engine::Get().WriteToBuffer({ startX, startY+2 }, underLine, buttonTextColor, buttonBackgroundColor);
 
 	startY += 5;//y값 올려서 버튼 간의 간격 조절
 	
@@ -66,57 +62,35 @@ void HomeLevel::Render()
 	exitButtonRightBottomXY.y = startY + 2;
 
 	// 메뉴 아이템 렌더링.
-	textColor = (1 == currentIndex) ? selectedColor : unselectedColor;
-
-	Engine::Get().WriteToBuffer({ startX, startY }, topLine, textColor);
-	Engine::Get().WriteToBuffer({ startX, startY+1 }, exitLine, textColor);
-	Engine::Get().WriteToBuffer({ startX, startY+2 }, underLine, textColor);
+	buttonTextColor = isHoverExit ? Color::Red : Color::BrightBlue;
+	buttonBackgroundColor = isHoverExit ? Color::Yellow : Color::Green;
+	Engine::Get().WriteToBuffer({ startX, startY }, topLine, buttonTextColor, buttonBackgroundColor);
+	Engine::Get().WriteToBuffer({ startX, startY+1 }, exitLine, buttonTextColor, buttonBackgroundColor);
+	Engine::Get().WriteToBuffer({ startX, startY+2 }, underLine, buttonTextColor, buttonBackgroundColor);
 
 }
 
 void HomeLevel::Tick(float deltaTime)
 {
 	super::Tick(deltaTime);
-	//키보드 입력 처리.
-	if (Input::Get().GetKeyDown(VK_UP))
-	{
-		currentIndex = (currentIndex - 1 + length) % length;
-	}
-
-	if (Input::Get().GetKeyDown(VK_DOWN))
-	{
-		currentIndex = (currentIndex + 1) % length;
-	}
-
-	if (Input::Get().GetKeyDown(VK_RETURN))	// Enter 키 입력.
-	{
-		// 메뉴 아이템이 저장하고 있는 함수 호출.
-		items[currentIndex]->onSelected();
-	}
-
 	if (Input::Get().GetKeyDown(VK_ESCAPE))
 	{
-		static_cast<Game&>(Engine::Get()).ToggleMenu();
-
-		currentIndex = 0;
+		items[1]->onSelected();
 	}
 
+	//마우스가 버튼 위에 있는지 확인
+	isHoverGameStart = Input::Get().IsMouseOver(gameStartButtonLeftTopXY, gameStartButtonRightBottomXY);
+	isHoverExit = Input::Get().IsMouseOver(exitButtonLeftTopXY, exitButtonRightBottomXY);
 	//마우스 입력 처리
 	if (Input::Get().GetMouseLeftDown() &&
-		Input::Get().IsMouseOver({ gameStartButtonLeftTopXY.x, gameStartButtonLeftTopXY.y }, { gameStartButtonRightBottomXY.x, gameStartButtonRightBottomXY.y }))
+		Input::Get().IsMouseOver(gameStartButtonLeftTopXY, gameStartButtonRightBottomXY))
 	{
-		if(currentIndex == 0)
-			items[0]->onSelected();
-		else
-			currentIndex = 0;
+		items[0]->onSelected();
 	}
 
 	if (Input::Get().GetMouseLeftDown() &&
-		Input::Get().IsMouseOver({ exitButtonLeftTopXY.x, exitButtonLeftTopXY.y }, { exitButtonRightBottomXY.x, exitButtonRightBottomXY.y }))
+		Input::Get().IsMouseOver(exitButtonLeftTopXY, exitButtonRightBottomXY))
 	{
-		if (currentIndex == 1)
-			items[1]->onSelected();
-		else
-			currentIndex = 1;
+		items[1]->onSelected();
 	}
 }
