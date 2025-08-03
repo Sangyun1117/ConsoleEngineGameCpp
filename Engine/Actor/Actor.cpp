@@ -7,20 +7,55 @@
 #include <iostream>
 #include <fstream>
 
-Actor::Actor(const std:: string & imageLink, Color color, const Vector2& position)
-	: imageLink(imageLink),color(color), position(position)
+//Actor::Actor(const std:: string & imageLink, Color color, const Vector2& position)
+//	: imageLink(imageLink),color(color), position(position)
+//{
+//	std::ifstream file(imageLink); //파일을 읽어옴
+//	if (!file.is_open()) {
+//		std::cerr << "파일을 열 수 없습니다: " << imageLink << std::endl;
+//		return;
+//	}
+//
+//	std::string line;
+//	while (std::getline(file, line)) {
+//		image.push_back(line);  // 줄 단위로 저장
+//	}
+//
+//}
+
+Actor::Actor(const std::string& imageLink, Color color, const Vector2& position)
+	: imageLink(imageLink), color(color), position(position)
 {
-	std::ifstream file(imageLink); //파일을 읽어옴
+	std::ifstream file(imageLink);
 	if (!file.is_open()) {
 		std::cerr << "파일을 열 수 없습니다: " << imageLink << std::endl;
 		return;
 	}
 
 	std::string line;
+	size_t maxWidth = 0;
+	std::vector<std::string> tempLines;
+
+	// 먼저 줄들을 읽고 최대 너비 구하기
 	while (std::getline(file, line)) {
-		image.push_back(line);  // 줄 단위로 저장
+		if (line.size() > maxWidth) maxWidth = line.size();
+		tempLines.push_back(line);
 	}
 
+	// 공백으로 패딩하고 image에 저장
+	for (const auto& l : tempLines) {
+		std::vector<char> row;
+		for (size_t i = 0; i < maxWidth; ++i) {
+			if (i < l.size())
+				row.push_back(l[i]);
+			else
+				row.push_back(' ');
+		}
+		image.push_back(std::move(row));
+	}
+
+	// 컬러 초기화
+	InitializeColors();
 }
 
 Actor::~Actor()
@@ -39,23 +74,37 @@ void Actor::Tick(float deltaTime)
 }
 
 // 그리기 함수.
+//void Actor::Render()
+//{
+//	Vector2 actorPos = { position.x - Engine::Get().cameraPos.x, position.y - Engine::Get().cameraPos.y };
+//
+//	for (int i = 0; i < 10 && i < image.size(); i++) {
+//		Vector2 drawPos = { actorPos.x, actorPos.y + i };
+//		// 화면 밖이면 그리지 않음
+//		if (drawPos.x < 0 || drawPos.x >= Engine::Get().GetScreenWidth() ||
+//			drawPos.y < 0 || drawPos.y >= Engine::Get().GetScreenHeight())
+//		{
+//			continue;
+//		}
+//
+//		const std::string line = image[i];
+//		//line.c_str()은 char형의 주소반환. 새로운 메모리를 할당하는 것이 아닌 string을 가리키는 것. 따로 delete 하지 말기
+//		Engine::Get().WriteToBuffer(drawPos, line.c_str(), color);
+//	}
+//}
+
 void Actor::Render()
 {
 	Vector2 actorPos = { position.x - Engine::Get().cameraPos.x, position.y - Engine::Get().cameraPos.y };
 
-	for (int i = 0; i < 10 && i < image.size(); i++) {
-		Vector2 drawPos = { actorPos.x, actorPos.y + i };
-		// 화면 밖이면 그리지 않음
-		if (drawPos.x < 0 || drawPos.x >= Engine::Get().GetScreenWidth() ||
-			drawPos.y < 0 || drawPos.y >= Engine::Get().GetScreenHeight())
-		{
-			continue;
-		}
+	// 화면 밖이면 아예 그리지 않음(필요시 영역 검사)
+	if (actorPos.x >= Engine::Get().GetScreenWidth() || actorPos.y >= Engine::Get().GetScreenHeight())
+		return;
 
-		const std::string line = image[i];
-		//line.c_str()은 char형의 주소반환. 새로운 메모리를 할당하는 것이 아닌 string을 가리키는 것. 따로 delete 하지 말기
-		Engine::Get().WriteToBuffer(drawPos, line.c_str(), color);
-	}
+	// 필요한 경우 그릴 영역(예: 화면 밖 부분 제외)만 잘라서 넘길 수도 있음.
+	// 지금은 그냥 전체 다 넘긴다고 가정.
+
+	Engine::Get().WriteToBuffer(actorPos, image, fgColors, bgColors);
 }
 
 void Actor::SetPosition(const Vector2& newPosition)
@@ -98,6 +147,23 @@ void Actor::Destroy()
 
 	// 레벨에 삭제 요청.
 	owner->DestroyActor(this);
+}
+
+void Actor::InitializeColors()
+{
+	size_t maxCols = 0;
+	for (const auto& row : image)
+		maxCols = maxCols > row.size() ? maxCols : row.size();
+		//maxCols = std::max(maxCols, row.size());
+	for (const auto& row : image)
+	{
+		std::vector<Color> fgRow(row.size(), Color::White);
+		std::vector<Color> bgRow(row.size(), Color::Black);
+		fgRow.resize(maxCols, Color::White); // 패딩
+		bgRow.resize(maxCols, Color::Black); // 패딩
+		fgColors.push_back(std::move(fgRow));
+		bgColors.push_back(std::move(bgRow));
+	}
 }
 
 

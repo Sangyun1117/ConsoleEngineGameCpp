@@ -34,4 +34,27 @@ namespace Utils
 		SetConsoleTextColor(static_cast<WORD>(color));
 	}
 
+	//벡터 잘라주는 함수
+	template<typename T>
+	std::vector<std::vector<T>> Slice2DVector(
+		const std::vector<std::vector<T>>& src,
+		int startRow, int startCol,
+		int height, int width)
+	{
+		std::vector<std::vector<T>> result;
+		int srcHeight = (int)src.size();
+		int srcWidth = (int)(src.empty() ? 0 : src[0].size());
+
+		for (int r = startRow; r < startRow + height && r < srcHeight; ++r)
+		{
+			std::vector<T> row;
+			for (int c = startCol; c < startCol + width && c < srcWidth; ++c)
+			{
+				row.push_back(src[r][c]);
+			}
+			result.push_back(std::move(row));
+		}
+
+		return result;
+	}
 }

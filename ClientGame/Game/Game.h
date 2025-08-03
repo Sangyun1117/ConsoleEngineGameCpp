@@ -9,7 +9,7 @@ public:
 	~Game();
 	//메뉴 전환 함수
 	void ToggleMenu();
-	void WriteToBuffer(const Vector2& position, const std::vector<std::string> image, Color fgColor, Color bgColor);
+	//Todo: 글자 단위 렌더 구현
 	virtual void CleanUp() override;
 private:
 	//메뉴 레벨

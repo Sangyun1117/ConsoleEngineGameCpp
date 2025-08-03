@@ -2,11 +2,11 @@
 
 #include "Core.h"
 #include "Input.h"
-#include <Windows.h>
 #include "Math/Vector2.h"
 #include "Render/ScreenBuffer.h"
 #include "Math/Color.h"
-
+#include <Windows.h>
+#include <vector>
 // 엔진 설정 구조체.
 struct EngineSettings
 {
@@ -36,7 +36,11 @@ public:
 
 	// 문자열 그리기 요청 함수.
 	void WriteToBuffer(const Vector2& position, const char* image, Color fgColor = Color::White, Color bgColor = Color::Black);
-
+	void WriteToBuffer(
+		const Vector2& position,
+		const std::vector<std::vector<char>>& image,
+		const std::vector<std::vector<Color>>& fgColors,
+		const std::vector<std::vector<Color>>& bgColors);
 	// 레벨 추가 함수.
 	void AddLevel(Level* newLevel);
 

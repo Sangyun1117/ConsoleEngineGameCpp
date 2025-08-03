@@ -51,6 +51,8 @@ public:
 	// 객체 삭제 함수.
 	void Destroy();
 
+	void InitializeColors();  // 여기서 색상 초기화
+
 	// 게임 종료 요청 함수.
 	void QuitGame();
 
@@ -67,7 +69,10 @@ protected:
 	Vector2 position;
 
 	//이미지 (아스키 아트)
-	std::vector<std::string> image;
+	//std::vector<std::string> image;
+	std::vector<std::vector<char>>image;
+	std::vector<std::vector<Color>>fgColors;
+	std::vector<std::vector<Color>>bgColors;
 	std::string imageLink;
 
 	int actionLevel = 0;

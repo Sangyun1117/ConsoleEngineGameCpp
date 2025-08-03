@@ -158,6 +158,7 @@ void Engine::Run()
 	CleanUp();
 }
 
+//한 문장을 받아서 버퍼에 저장
 void Engine::WriteToBuffer(const Vector2& position, const char* image, Color fgColor, Color bgColor)
 {
 	int length = static_cast<int>(strlen(image));
@@ -175,6 +176,37 @@ void Engine::WriteToBuffer(const Vector2& position, const char* image, Color fgC
 
 		imageBuffer[index].Char.AsciiChar = image[ix];
 		imageBuffer[index].Attributes = (WORD)fgColor | ((WORD)bgColor << 4);
+	}
+}
+
+//전체 텍스트를 받아서 한 단어씩 버퍼에 저장
+void Engine::WriteToBuffer(
+	const Vector2& position,
+	const std::vector<std::vector<char>>& image,
+	const std::vector<std::vector<Color>>& fgColors,
+	const std::vector<std::vector<Color>>& bgColors)
+{
+	int height = static_cast<int>(image.size());
+	if (height == 0) return;
+	int width = static_cast<int>(image[0].size());
+
+	for (int y = 0; y < height; ++y)
+	{
+		for (int x = 0; x < width; ++x)
+		{
+			int drawX = position.x + x;
+			int drawY = position.y + y;
+
+			// 범위 밖 체크
+			if (drawX < 0 || drawX >= settings.width || drawY < 0 || drawY >= settings.height)
+				continue;
+
+			int index = drawY * settings.width + drawX;
+
+			imageBuffer[index].Char.AsciiChar = image[y][x];
+			WORD attr = static_cast<WORD>(fgColors[y][x]) | (static_cast<WORD>(bgColors[y][x]) << 4);
+			imageBuffer[index].Attributes = attr;
+		}
 	}
 }
 

@@ -1,6 +1,7 @@
 #include "Player.h"
 #include "Block.h"
 #include "Engine.h"
+#include "Utils/Utils.h"
 #include "Settings/ActionDefines.h"
 #include "Game/Game.h"
 #include "Level/GameLevel.h"
@@ -197,26 +198,38 @@ void Player::Render()
 {
 	Vector2 actorPos = { position.x - Engine::Get().cameraPos.x, position.y - Engine::Get().cameraPos.y };
 	
+	if (image.empty() || image[0].empty())
+		return;
+
 	//플레이어 렌더
 	int direction = isRight ? 0 : 50;
 	int animationLevel = 0;
 	if (isRunning) {
 		animationLevel = (runFrame + 1) * 10;
 	}
-	for (int i = 0; i < 10; i++) {
-		Vector2 drawPos = { actorPos.x, actorPos.y + i };
-		// 화면 밖이면 그리지 않음
-		if (drawPos.x < 0 || drawPos.x >= Engine::Get().GetScreenWidth() ||
-			drawPos.y < 0 || drawPos.y >= Engine::Get().GetScreenHeight())
-		{
-			continue;
-		}
 
-		//const std::string line = image[i + direction + actionLevel]; //i: 줄, direction: 방향, adctionLevel: 액션이미지
-		const std::string line = image[i + direction + animationLevel]; //i: 줄, direction: 방향, animationLevel: 애니메이션프레임
-		//line.c_str()은 char형의 주소반환. 새로운 메모리를 할당하는 것이 아닌 string을 가리키는 것. 따로 delete 하지 말기
-		Engine::Get().WriteToBuffer(drawPos, line.c_str(), color);
-	}
+	int startRow = direction + animationLevel;
+	int drawHeight = 10; // 10줄 그린다고 가정
+
+	// 이미지와 색상에서 필요한 부분만 자름
+	auto sliceImage = Utils::Slice2DVector(image, startRow, 0, drawHeight, (int)image[0].size());
+	auto sliceFg = Utils::Slice2DVector(fgColors, startRow, 0, drawHeight, (int)fgColors[0].size());
+	auto sliceBg = Utils::Slice2DVector(bgColors, startRow, 0, drawHeight, (int)bgColors[0].size());
+	Engine::Get().WriteToBuffer(actorPos, sliceImage, sliceFg, sliceBg);
+	//for (int i = 0; i < 10; i++) {
+	//	Vector2 drawPos = { actorPos.x, actorPos.y + i };
+	//	// 화면 밖이면 그리지 않음
+	//	if (drawPos.x < 0 || drawPos.x >= Engine::Get().GetScreenWidth() ||
+	//		drawPos.y < 0 || drawPos.y >= Engine::Get().GetScreenHeight())
+	//	{
+	//		continue;
+	//	}
+
+	//	//const std::string line = image[i + direction + actionLevel]; //i: 줄, direction: 방향, adctionLevel: 액션이미지
+	//	//const std::string line = image[i + direction + animationLevel]; //i: 줄, direction: 방향, animationLevel: 애니메이션프레임
+	//	//line.c_str()은 char형의 주소반환. 새로운 메모리를 할당하는 것이 아닌 string을 가리키는 것. 따로 delete 하지 말기
+	//	//Engine::Get().WriteToBuffer(drawPos, line.c_str(), color);
+	//}
 
 	//아이템 렌더
 	int itemDirection = isRight ? 0 : 5;
