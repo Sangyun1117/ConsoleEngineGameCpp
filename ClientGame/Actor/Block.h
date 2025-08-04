@@ -4,5 +4,7 @@
 class Block : public Actor {
 public:
 	Block(int x = 0, int y = 0);
-	~Block();
+	virtual ~Block();
+private:
+	std::string bgColorsImageLink = "../Assets/Colors/GrassBlockBgColors.txt";
 };

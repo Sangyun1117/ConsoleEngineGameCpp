@@ -14,7 +14,10 @@ BOOL WINAPI Engine::ConsoleHandler(DWORD signal)
 {
 	if (signal == CTRL_CLOSE_EVENT || signal == CTRL_LOGOFF_EVENT || signal == CTRL_SHUTDOWN_EVENT)
 	{
-		g_isQuitByConsole = true;
+		Engine::Get().CleanUp();
+		//g_isQuitByConsole = true;
+		
+		_CrtDumpMemoryLeaks();
 		return TRUE;
 	}
 
@@ -72,7 +75,8 @@ Engine::Engine()
 	ScreenSettings();
 
 	// 콘솔 창 이벤트 등록.
-	SetConsoleCtrlHandler(ConsoleMessageProcedure, TRUE);
+	//SetConsoleCtrlHandler(ConsoleMessageProcedure, TRUE);
+	SetConsoleCtrlHandler(ConsoleHandler, TRUE);
 
 	//빠른 편집 모드 삭제
 	DisableQuickEditMode();
@@ -80,7 +84,7 @@ Engine::Engine()
 
 Engine::~Engine()
 {
-	//CleanUp();
+	CleanUp();
 }
 
 void Engine::Run()
@@ -145,7 +149,6 @@ void Engine::Run()
 			{
 				mainLevel->ProcessAddAndDestroyActors();
 			}
-
 		}
 	}
 
@@ -153,9 +156,6 @@ void Engine::Run()
 	Utils::SetConsoleTextColor(
 		FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED
 	);
-
-	//종료시 소멸자에서 호출하면 버그나서 한 번 run 종료 후로 바꿔봄. run 루프 중에 갑자기 이미지 버퍼가 사라지는 경우 방지
-	CleanUp();
 }
 
 //한 문장을 받아서 버퍼에 저장
@@ -201,6 +201,10 @@ void Engine::WriteToBuffer(
 			if (drawX < 0 || drawX >= settings.width || drawY < 0 || drawY >= settings.height)
 				continue;
 
+			// 공백이면 아무 것도 안 그리기
+			if (image[y][x] == ' ')
+				continue;
+
 			int index = drawY * settings.width + drawX;
 
 			imageBuffer[index].Char.AsciiChar = image[y][x];
@@ -223,7 +227,6 @@ void Engine::AddLevel(Level* newLevel)
 
 void Engine::CleanUp()
 {
-
 	// 렌더 타겟 삭제.
 	SafeDelete(renderTargets[0]);
 	SafeDelete(renderTargets[1]);
@@ -378,8 +381,13 @@ ScreenBuffer* Engine::GetRenderer() const
 	return renderTargets[currentRenderTargetIndex];
 }
 
-void Engine::ClearImageBuffer()
+void Engine::ClearImageBuffer() //화면 초기화
 {
+	//기본 배경
+	//WORD defaultColor =
+	//	FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY | // 흰 글자
+	//	BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_INTENSITY; // 하늘색 배경
+
 	// 글자 버퍼 덮어쓰기.
 	for (int y = 0; y < settings.height; ++y)
 	{
@@ -467,6 +475,16 @@ void Engine::ScreenSettings()
 			// 콘솔 창 이동 및 크기 설정
 			MoveWindow(consoleWindow, x, y, totalWindowWidth, totalWindowHeight, TRUE);
 
+
+			// 5. 콘솔창 x버튼 지우기
+			// 현재 윈도우 스타일 값을 가져옵니다.
+			LONG_PTR style = GetWindowLongPtr(consoleWindow, GWL_STYLE);
+
+			// 제목 표시줄, 크기 조절 테두리, 시스템 메뉴 등의 스타일을 제거합니다.
+			style &= ~(WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SYSMENU | WS_VSCROLL | WS_HSCROLL);
+
+			// 변경된 스타일을 다시 적용합니다.
+			SetWindowLongPtr(consoleWindow, GWL_STYLE, style);
 		}
 	}
 }

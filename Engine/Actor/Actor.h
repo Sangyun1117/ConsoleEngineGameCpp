@@ -17,7 +17,6 @@ class Engine_API Actor : public RTTI
 public:
 	Actor(
 		const std::string& imageLink,
-		Color color = Color::White,
 		const Vector2& position = Vector2::Zero
 	);
 	virtual ~Actor();
@@ -53,6 +52,7 @@ public:
 
 	void InitializeColors();  // 여기서 색상 초기화
 
+	void LoadColorsImage(std::vector<std::vector<Color>>& colorGrid, const std::string& filePath);
 	// 게임 종료 요청 함수.
 	void QuitGame();
 
@@ -76,12 +76,6 @@ protected:
 	std::string imageLink;
 
 	int actionLevel = 0;
-
-	// 문자열 길이.
-	int width = 0;
-
-	// 텍스트 색상 값.
-	Color color;
 
 	// BeginPlay 호출이 되었는지 확인.
 	bool hasBeganPlay = false;

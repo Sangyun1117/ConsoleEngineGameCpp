@@ -15,7 +15,9 @@ GameLevel::GameLevel()
 
 GameLevel::~GameLevel()
 {
-	super::~Level();
+	//super::~Level();
+	//mapData.clear();
+	player = nullptr;
 }
 
 void GameLevel::BeginPlay()
@@ -30,7 +32,9 @@ void GameLevel::Tick(float deltaTime)
 
 void GameLevel::Render()
 {
+	//super::Render();
 
+	SettingBackground();
 	// 그리기 전에 정렬 순서 기준으로 재배치(정렬).
 	SortActorsBySortingOrder();
 
@@ -76,6 +80,42 @@ void GameLevel::Render()
 		actor->Render();
 	}
 
+
+
+}
+
+//월드y값 기준 배경색 세팅
+void GameLevel::SettingBackground()
+{
+	WORD skyColor =
+	BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_INTENSITY; // 하늘색 배경
+	WORD groundColor = 0; // 검정 배경
+
+	WORD nowColor = skyColor;
+
+	int screenWidth = Engine::Get().GetScreenWidth();
+	int screenHeight = Engine::Get().GetScreenHeight();
+	int groundLine = 40;
+	for (int y = 0; y < Engine::Get().GetScreenHeight(); ++y)
+	{
+		nowColor = (Engine::Get().cameraPos.y + y >= groundLine) ? groundColor : skyColor;
+		for (int x = 0; x < screenWidth; ++x)
+		{
+			CHAR_INFO& buffer = Engine::Get().imageBuffer[(y * (screenWidth)) + x];
+			buffer.Char.AsciiChar = ' ';
+			buffer.Attributes = nowColor;
+		}
+
+		// 각 줄 끝에 개행 문자 추가.
+		CHAR_INFO& buffer = Engine::Get().imageBuffer[(y * (screenWidth)) + screenWidth];
+		buffer.Char.AsciiChar = '\n';
+		buffer.Attributes = nowColor;
+	}
+
+	// 마지막에 널 문자 추가.
+	CHAR_INFO& buffer = Engine::Get().imageBuffer[(screenWidth) * screenHeight];
+	buffer.Char.AsciiChar = '\0';
+	buffer.Attributes = nowColor;
 }
 
 

@@ -185,6 +185,7 @@ xcopy $(OutDir)\Engine.dll ..\Lib\Engine\ /y</Command>
     <ClInclude Include="Core\Input.h" />
     <ClInclude Include="Core\RTTI.h" />
     <ClInclude Include="Level\Level.h" />
+    <ClInclude Include="Math\Color.h" />
     <ClInclude Include="Math\Vector2.h" />
     <ClInclude Include="Render\ScreenBuffer.h" />
     <ClInclude Include="UI\UIElement.h" />

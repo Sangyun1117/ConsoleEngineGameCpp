@@ -7,10 +7,10 @@ B--------------P---------------B
 B------------------------------B
 B-B--B--B--B--B--B---B---------B
 BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
-B------------------------------B
-B----------------B-------------B
-B------------B------B----------B
-B----------B------------B------B
-B--------------p--------B------B
-B-----B-----------------B------B
+BBBBBBBBBBBBBBBBBBBBBBBBB--BBBBB
+BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+BBBBBBBBBBBBBB--BBBBBBBBBBBBBBBB
+BBBBBBBBBBBBBBBBB--BBBBBBBBBBBBB
+BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
 BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB

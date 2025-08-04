@@ -15,8 +15,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "솔루션 항목", "솔루�
 		Assets\Maps\chunk_0_0.txt = Assets\Maps\chunk_0_0.txt
 		Settings\EngineSettings.txt = Settings\EngineSettings.txt
 		Assets\Images\GrassBlock.txt = Assets\Images\GrassBlock.txt
+		Assets\Colors\GrassBlockBgColors.txt = Assets\Colors\GrassBlockBgColors.txt
 		Assets\Images\Item.txt = Assets\Images\Item.txt
 		Assets\Images\Player.txt = Assets\Images\Player.txt
+		Assets\Colors\PlayerFgColors.txt = Assets\Colors\PlayerFgColors.txt
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Engine", "Engine\Engine.vcxproj", "{863029D6-C616-4F83-935D-A15719244610}"

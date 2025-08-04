@@ -88,6 +88,7 @@ protected:
 	void DisableQuickEditMode();
 public:
 	Vector2 cameraPos = { 0,0 };
+	CHAR_INFO* imageBuffer = nullptr; // 백버퍼(프레임).
 protected:
 	// 엔진 종료 플래그.
 	bool isQuit = false;
@@ -102,7 +103,6 @@ protected:
 	EngineSettings settings;
 
 	//더블버퍼링을 위한 변수
-	CHAR_INFO* imageBuffer = nullptr; // 백버퍼(프레임).
 	ScreenBuffer* renderTargets[2] = { }; // 이중 버퍼.
 	int currentRenderTargetIndex = 0; // 백버퍼로 사용하는 렌더 타겟의 인덱스.
 	

@@ -51,7 +51,7 @@ ScreenBuffer::ScreenBuffer(HANDLE console, const Vector2& screenSize)
 ScreenBuffer::~ScreenBuffer()
 {
 	// 생성한 핸들 해제.
-	if (buffer)
+	if (buffer != nullptr && buffer != INVALID_HANDLE_VALUE)
 	{
 		CloseHandle(buffer);
 	}
@@ -67,7 +67,7 @@ void ScreenBuffer::Clear()
 
 	// 화면 버퍼 전체에 빈 문자열 기록.
 	// 콘솔 전체에 한 글자를 입력할 때 사용 (memset과 비슷).
-	FillConsoleOutputCharacter(buffer, ' ', (screenSize.x + 1) * screenSize.y + 1, position, &writtenCount);
+	FillConsoleOutputCharacter(buffer, ' ', (screenSize.x) * screenSize.y, position, &writtenCount);
 }
 
 void ScreenBuffer::Render(CHAR_INFO* charInfo)

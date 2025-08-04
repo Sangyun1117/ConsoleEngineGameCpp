@@ -13,9 +13,8 @@ UIElement::UIElement(const std::string& imageLink) : imageLink(imageLink)
     }
 
     std::string line;
-    while (std::getline(file, line)) {
-        image.push_back(line);
-    }
+    size_t maxWidth = 0;
+    std::vector<std::string> tempLines;
 
     file.close();
 }

@@ -11,6 +11,6 @@ public:
 public:
 	bool isVisible = true;
 protected:
-	std::vector<std::string> image;
+	std::vector<std::vector<char>> image;
 	std::string imageLink;
 };

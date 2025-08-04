@@ -6,6 +6,7 @@
 #include "Game/Game.h"
 #include "Level/GameLevel.h"
 #include "Math/Vector2.h"
+#include "Math/Color.h"
 #include "Settings//ObjectDefines.h"
 #include <windows.h>
 #include <cstdio>
@@ -13,13 +14,15 @@
 #include <fstream>
 #include <iostream>
 
-Player::Player(int x, int y) : Actor("../Assets/Images/AmongUs.txt", Color::Blue)
+Player::Player(int x, int y) : Actor("../Assets/Images/AmongUs.txt")
 {
 	actionLevel = ACTION_IDLE;
+	LoadColorsImage(bgColors, bgColorsImageLink);
 	LoadItemsImage();
 	SetPosition(Vector2(x, y));
 	SetSortingOrder(10);
 	InventoryReset(); //인벤토리 0~9 까지 핸드로 초기화
+
 }
 
 void Player::Tick(float deltaTime)
@@ -213,7 +216,7 @@ void Player::Render()
 
 	// 이미지와 색상에서 필요한 부분만 자름
 	auto sliceImage = Utils::Slice2DVector(image, startRow, 0, drawHeight, (int)image[0].size());
-	auto sliceFg = Utils::Slice2DVector(fgColors, startRow, 0, drawHeight, (int)fgColors[0].size());
+	auto sliceFg = Utils::Slice2DVector(bgColors, startRow, 0, drawHeight, (int)bgColors[0].size());
 	auto sliceBg = Utils::Slice2DVector(bgColors, startRow, 0, drawHeight, (int)bgColors[0].size());
 	Engine::Get().WriteToBuffer(actorPos, sliceImage, sliceFg, sliceBg);
 	//for (int i = 0; i < 10; i++) {
@@ -237,20 +240,31 @@ void Player::Render()
 	int itemPosY = isItemAction ? 6 : 3;
 	int itemActionPoint = isItemAction ? 10 : 0;
 	if (itemLevel != ITEM_HAND) {
-		for (int i = 0; i < 5; i++) {
-			Vector2 drawPos = { actorPos.x + itemPosX, actorPos.y + i + itemPosY };
-			// 화면 밖이면 그리지 않음
-			if (drawPos.x < 0 || drawPos.x >= Engine::Get().GetScreenWidth() ||
-				drawPos.y < 0 || drawPos.y >= Engine::Get().GetScreenHeight())
-			{
-				continue;
-			}
+		startRow = itemDirection + (itemLevel - 1) * 20 + itemActionPoint;
+		drawHeight = 5;
 
-			const std::string line = itemsImage[i + itemDirection + (itemLevel-1)*20 + itemActionPoint]; //i: 줄, direction: 방향, Level: 아이템종류, actionPoint: 액션중인지
-			//line.c_str()은 char형의 주소반환. 새로운 메모리를 할당하는 것이 아닌 string을 가리키는 것. 따로 delete 하지 말기
-			Engine::Get().WriteToBuffer(drawPos, line.c_str(), Color::White);
-		}
+		auto sliceImage = Utils::Slice2DVector(itemsImage, startRow, 0, drawHeight, (int)itemsImage[0].size());
+		auto sliceFg = Utils::Slice2DVector(itemsFgColors, startRow, 0, drawHeight, (int)itemsFgColors[0].size());
+		auto sliceBg = Utils::Slice2DVector(itemsBgColors, startRow, 0, drawHeight, (int)itemsBgColors[0].size());
+
+		Vector2 itemDrawPos = { actorPos.x + itemPosX, actorPos.y + itemPosY };
+		Engine::Get().WriteToBuffer(itemDrawPos, sliceImage, sliceFg, sliceBg);
 	}
+
+	//if (itemLevel != ITEM_HAND) {
+	//	for (int i = 0; i < 5; i++) {
+	//		Vector2 drawPos = { actorPos.x + itemPosX, actorPos.y + i + itemPosY };
+	//		// 화면 밖이면 그리지 않음
+	//		if (drawPos.x < 0 || drawPos.x >= Engine::Get().GetScreenWidth() ||
+	//			drawPos.y < 0 || drawPos.y >= Engine::Get().GetScreenHeight())
+	//		{
+	//			continue;
+	//		}
+	//		//const std::string line = itemsImage[i + itemDirection + (itemLevel-1)*20 + itemActionPoint]; //i: 줄, direction: 방향, Level: 아이템종류, actionPoint: 액션중인지
+	//		//line.c_str()은 char형의 주소반환. 새로운 메모리를 할당하는 것이 아닌 string을 가리키는 것. 따로 delete 하지 말기
+	//		//Engine::Get().WriteToBuffer(drawPos, line.c_str(), Color::White);
+	//	}
+	//}
 }
 
 void Player::Move(Vector2 delta)
@@ -284,6 +298,31 @@ void Player::Move(Vector2 delta)
 	Engine::Get().cameraPos = Engine::Get().cameraPos + delta;
 }
 
+//void Player::LoadColorsImage()
+//{
+//	std::ifstream file(fgColorsImageLink);
+//	if (!file.is_open()) {
+//		std::cerr << "파일을 열 수 없습니다: " << fgColorsImageLink << std::endl;
+//		return;
+//	}
+//
+//	std::string line;
+//	int y = 0;
+//
+//	while (std::getline(file, line)) {
+//		if (y >= fgColors.size()) //만약 사이즈가 초과하는 오류가 생김을 방지
+//			break;
+//		for (int x = 0; x < std::min<int>(line.size(), fgColors[y].size()); ++x) {
+//			Color c = ConvertHexCharToColor(line[x]);
+//			if (c != Color::Transparent) {
+//				fgColors[y][x] = c;
+//				bgColors[y][x] = c;
+//			}
+//		}
+//		y++;
+//	}
+//}
+
 void Player::Attack()
 {
 	actionLevel = ACTION_ATTACK;
@@ -299,14 +338,34 @@ void Player::InventoryReset() {
 
 void Player::LoadItemsImage()
 {
-	std::ifstream file(itemImageLink); //파일을 읽어옴
+	std::ifstream file(itemImageLink);
 	if (!file.is_open()) {
-		std::cerr << "파일을 열 수 없습니다: " << imageLink << std::endl;
+		std::cerr << "파일을 열 수 없습니다: " << itemImageLink << std::endl;
 		return;
 	}
 
 	std::string line;
+	size_t maxWidth = 0;
+	std::vector<std::string> tempLines;
+
+	// 먼저 줄들을 읽고 최대 너비 구하기
 	while (std::getline(file, line)) {
-		itemsImage.push_back(line);  // 줄 단위로 저장
+		if (line.size() > maxWidth) maxWidth = line.size();
+		tempLines.push_back(line);
 	}
+
+	// 공백으로 패딩하고 image에 저장
+	for (const auto& l : tempLines) {
+		std::vector<char> row;
+		for (size_t i = 0; i < maxWidth; ++i) {
+			if (i < l.size())
+				row.push_back(l[i]);
+			else
+				row.push_back(' ');
+		}
+		itemsImage.push_back(std::move(row));
+	}
+
+	itemsFgColors = std::vector<std::vector<Color>>(itemsImage.size(), std::vector<Color>(itemsImage[0].size(), Color::White));
+	itemsBgColors = std::vector<std::vector<Color>>(itemsImage.size(), std::vector<Color>(itemsImage[0].size(), Color::Black));
 }

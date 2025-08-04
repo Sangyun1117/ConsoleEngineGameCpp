@@ -6,8 +6,9 @@ Game::Game()
 {
 	instance = this;
     //AddLevel(new GameLevel());
-	AddLevel(new HomeLevel());
+    menuLevel = new HomeLevel();
     backLevel = new GameLevel();
+	AddLevel(menuLevel);
 }
 
 Game::~Game()
@@ -37,11 +38,22 @@ void Game::ToggleMenu()
 
 void Game::CleanUp()
 {
-	if (showHome) {
+	if (showHome)
+    {
 		//게임 레벨 제거
 		SafeDelete(backLevel);
+        SafeDelete(mainLevel);
 		mainLevel = nullptr;
 	}
-	SafeDelete(menuLevel);
-	Engine::CleanUp();
+    else
+    {
+        mainLevel = nullptr;
+        SafeDelete(backLevel);
+        SafeDelete(menuLevel);
+        menuLevel = nullptr;
+    }
+
+	//SafeDelete(menuLevel);
+    //mainLevel = nullptr;
+	//Engine::CleanUp();
 }

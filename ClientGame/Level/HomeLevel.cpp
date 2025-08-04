@@ -1,8 +1,6 @@
 #include "HomeLevel.h"
 #include "Utils/Utils.h"
-#include "HomeLevel.h"
 #include "Game/Game.h"
-#include "Utils/Utils.h"
 #include <iostream>
 #include "Input.h"
 HomeLevel::HomeLevel()

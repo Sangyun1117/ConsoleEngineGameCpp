@@ -23,8 +23,8 @@
 //
 //}
 
-Actor::Actor(const std::string& imageLink, Color color, const Vector2& position)
-	: imageLink(imageLink), color(color), position(position)
+Actor::Actor(const std::string& imageLink, const Vector2& position)
+	: imageLink(imageLink), position(position)
 {
 	std::ifstream file(imageLink);
 	if (!file.is_open()) {
@@ -166,6 +166,30 @@ void Actor::InitializeColors()
 	}
 }
 
+void Actor::LoadColorsImage(std::vector<std::vector<Color>>& colorGrid, const std::string& filePath)
+{
+	std::ifstream file(filePath);
+	if (!file.is_open()) {
+		std::cerr << "컬러 파일을 열 수 없습니다: " << filePath << std::endl;
+		return;
+	}
+
+	std::string line;
+	int y = 0;
+
+	while (std::getline(file, line)) {
+		if (y >= colorGrid.size())
+			break;
+
+		for (int x = 0; x < std::min<int>(line.size(), colorGrid[y].size()); ++x) {
+			Color c = ConvertHexCharToColor(line[x]);
+			if (c != Color::Transparent) {
+				colorGrid[y][x] = c;
+			}
+		}
+		y++;
+	}
+}
 
 void Actor::QuitGame()
 {

@@ -2,6 +2,7 @@
 #include "Actor/Actor.h"
 #include "Utils/Utils.h"
 #include <iostream>
+#include <algorithm>
 
 Level::Level()
 {
@@ -11,6 +12,12 @@ Level::~Level()
 {
 	// 메모리 해제.
 	for (Actor* actor : actors)
+	{
+		SafeDelete(actor);
+	}
+
+	// @Incomplete: 다른 곳에서도 문제 없는지 확인 필요함.
+	for (Actor* actor : addRequstedActors)
 	{
 		SafeDelete(actor);
 	}
@@ -30,7 +37,7 @@ void Level::AddActor(Actor* newActor)
 {
 	// 대기 배열에 추가.
 	addRequstedActors.emplace_back(newActor);
-	
+
 	// 오너십 설정.
 	newActor->SetOwner(this);
 }
@@ -46,6 +53,12 @@ void Level::BeginPlay()
 {
 	for (Actor* const actor : actors)
 	{
+		if (actor == nullptr)
+		{
+			// 로그 남기고 건너뜀
+			OutputDebugStringA("이미 삭제된 actor");
+			continue;
+		}
 		// 액터 처리 여부 확인.
 		if (!actor->isActive || actor->isExpired)
 		{
@@ -78,6 +91,7 @@ void Level::Tick(float deltaTime)
 
 void Level::Render()
 {
+	//actors.erase(std::remove(actors.begin(), actors.end(), nullptr), actors.end());
 	// 그리기 전에 정렬 순서 기준으로 재배치(정렬).
 	SortActorsBySortingOrder();
 
@@ -153,6 +167,7 @@ void Level::ProcessAddAndDestroyActors()
 	for (auto* actor : destroyRequstedActors)
 	{
 		// 리소스 해제.
+		actor->SetOwner(nullptr);
 		SafeDelete(actor);
 	}
 
@@ -178,16 +193,20 @@ void Level::AddUI(UIElement* newUI)
 void Level::SortActorsBySortingOrder()
 {
 	// 버블 정렬.
-	for (int ix = 0; ix < (int)actors.size(); ++ix)
-	{
-		for (int jx = 0; jx < (int)actors.size() - 1; ++jx)
-		{
-			// sortingOrder 값이 클수록 뒤 쪽에 배치.
-			if (actors[jx]->sortingOrder > actors[jx + 1]->sortingOrder)
-			{
-				// 두 액터 위치 교환.
-				std::swap(actors[jx], actors[jx + 1]);
-			}
-		}
-	}
+	//for (int ix = 0; ix < (int)actors.size(); ++ix)
+	//{
+	//	for (int jx = 0; jx < (int)actors.size() - 1; ++jx)
+	//	{
+	//		// sortingOrder 값이 클수록 뒤 쪽에 배치.
+	//		if (actors[jx]->sortingOrder > actors[jx + 1]->sortingOrder)
+	//		{
+	//			// 두 액터 위치 교환.
+	//			std::swap(actors[jx], actors[jx + 1]);
+	//		}
+	//	}
+	//}
+	std::sort(actors.begin(), actors.end(),
+		[](Actor* a, Actor* b) {
+			return a->sortingOrder < b->sortingOrder;
+		});
 }
