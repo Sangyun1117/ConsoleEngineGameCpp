@@ -48,6 +48,9 @@
     <ClInclude Include="Math\Color.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Core\ImageManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core\Engine.cpp">

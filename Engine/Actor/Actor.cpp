@@ -3,6 +3,7 @@
 #include "Engine.h"
 #include "Level/Level.h"
 #include "Math/Vector2.h"
+#include "ImageManager.h"
 #include <Windows.h>
 #include <iostream>
 #include <fstream>
@@ -23,39 +24,38 @@
 //
 //}
 
-Actor::Actor(const std::string& imageLink, const Vector2& position)
-	: imageLink(imageLink), position(position)
-{
-	std::ifstream file(imageLink);
-	if (!file.is_open()) {
-		std::cerr << "파일을 열 수 없습니다: " << imageLink << std::endl;
-		return;
-	}
+Actor::Actor(const std::string& imageLink, const Vector2& position, const std::vector<std::vector<char>>& images, const std::vector<std::vector<Color>>& bgs, const std::vector<std::vector<Color>>& fgs)
+	: imageLink(imageLink), position(position), asciiImages(images), bgs(bgs), fgs(fgs){
+	//std::ifstream file(imageLink);
+	//if (!file.is_open()) {
+	//	std::cerr << "파일을 열 수 없습니다: " << imageLink << std::endl;
+	//	return;
+	//}
 
-	std::string line;
-	size_t maxWidth = 0;
-	std::vector<std::string> tempLines;
+	//std::string line;
+	//size_t maxWidth = 0;
+	//std::vector<std::string> tempLines;
 
-	// 먼저 줄들을 읽고 최대 너비 구하기
-	while (std::getline(file, line)) {
-		if (line.size() > maxWidth) maxWidth = line.size();
-		tempLines.push_back(line);
-	}
+	//// 먼저 줄들을 읽고 최대 너비 구하기
+	//while (std::getline(file, line)) {
+	//	if (line.size() > maxWidth) maxWidth = line.size();
+	//	tempLines.push_back(line);
+	//}
 
-	// 공백으로 패딩하고 image에 저장
-	for (const auto& l : tempLines) {
-		std::vector<char> row;
-		for (size_t i = 0; i < maxWidth; ++i) {
-			if (i < l.size())
-				row.push_back(l[i]);
-			else
-				row.push_back(' ');
-		}
-		image.push_back(std::move(row));
-	}
+	//// 공백으로 패딩하고 image에 저장
+	//for (const auto& l : tempLines) {
+	//	std::vector<char> row;
+	//	for (size_t i = 0; i < maxWidth; ++i) {
+	//		if (i < l.size())
+	//			row.push_back(l[i]);
+	//		else
+	//			row.push_back(' ');
+	//	}
+	//	image.push_back(std::move(row));
+	//}
 
 	// 컬러 초기화
-	InitializeColors();
+	//InitializeColors();
 }
 
 Actor::~Actor()
@@ -104,7 +104,7 @@ void Actor::Render()
 	// 필요한 경우 그릴 영역(예: 화면 밖 부분 제외)만 잘라서 넘길 수도 있음.
 	// 지금은 그냥 전체 다 넘긴다고 가정.
 
-	Engine::Get().WriteToBuffer(actorPos, image, fgColors, bgColors);
+	Engine::Get().WriteToBuffer(actorPos, asciiImages, fgs, bgs);
 }
 
 void Actor::SetPosition(const Vector2& newPosition)
@@ -149,47 +149,47 @@ void Actor::Destroy()
 	owner->DestroyActor(this);
 }
 
-void Actor::InitializeColors()
-{
-	size_t maxCols = 0;
-	for (const auto& row : image)
-		maxCols = maxCols > row.size() ? maxCols : row.size();
-		//maxCols = std::max(maxCols, row.size());
-	for (const auto& row : image)
-	{
-		std::vector<Color> fgRow(row.size(), Color::White);
-		std::vector<Color> bgRow(row.size(), Color::Black);
-		fgRow.resize(maxCols, Color::White); // 패딩
-		bgRow.resize(maxCols, Color::Black); // 패딩
-		fgColors.push_back(std::move(fgRow));
-		bgColors.push_back(std::move(bgRow));
-	}
-}
+//void Actor::InitializeColors()
+//{
+//	size_t maxCols = 0;
+//	for (const auto& row : asciiImages)
+//		maxCols = maxCols > row.size() ? maxCols : row.size();
+//		//maxCols = std::max(maxCols, row.size());
+//	for (const auto& row : asciiImages)
+//	{
+//		std::vector<Color> fgRow(row.size(), Color::White);
+//		std::vector<Color> bgRow(row.size(), Color::Black);
+//		fgRow.resize(maxCols, Color::White); // 패딩
+//		bgRow.resize(maxCols, Color::Black); // 패딩
+//		fgColors.push_back(std::move(fgRow));
+//		bgColors.push_back(std::move(bgRow));
+//	}
+//}
 
-void Actor::LoadColorsImage(std::vector<std::vector<Color>>& colorGrid, const std::string& filePath)
-{
-	std::ifstream file(filePath);
-	if (!file.is_open()) {
-		std::cerr << "컬러 파일을 열 수 없습니다: " << filePath << std::endl;
-		return;
-	}
-
-	std::string line;
-	int y = 0;
-
-	while (std::getline(file, line)) {
-		if (y >= colorGrid.size())
-			break;
-
-		for (int x = 0; x < std::min<int>(line.size(), colorGrid[y].size()); ++x) {
-			Color c = ConvertHexCharToColor(line[x]);
-			if (c != Color::Transparent) {
-				colorGrid[y][x] = c;
-			}
-		}
-		y++;
-	}
-}
+//void Actor::LoadColorsImage(std::vector<std::vector<Color>>& colorGrid, const std::string& filePath)
+//{
+//	std::ifstream file(filePath);
+//	if (!file.is_open()) {
+//		std::cerr << "컬러 파일을 열 수 없습니다: " << filePath << std::endl;
+//		return;
+//	}
+//
+//	std::string line;
+//	int y = 0;
+//
+//	while (std::getline(file, line)) {
+//		if (y >= colorGrid.size())
+//			break;
+//
+//		for (int x = 0; x < std::min<int>(line.size(), colorGrid[y].size()); ++x) {
+//			Color c = ConvertHexCharToColor(line[x]);
+//			if (c != Color::Transparent) {
+//				colorGrid[y][x] = c;
+//			}
+//		}
+//		y++;
+//	}
+//}
 
 void Actor::QuitGame()
 {

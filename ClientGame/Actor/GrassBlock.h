@@ -1,10 +1,10 @@
 #pragma once
 #include "Actor/Actor.h"
 
-class Block : public Actor {
+class GrassBlock : public Actor {
 public:
-	Block(int x = 0, int y = 0);
-	virtual ~Block();
+	GrassBlock(int x = 0, int y = 0);
+	virtual ~GrassBlock();
 private:
 	std::string bgColorsImageLink = "../Assets/Colors/GrassBlockBgColors.txt";
 };

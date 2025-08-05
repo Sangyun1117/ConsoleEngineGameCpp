@@ -1,7 +1,8 @@
 #include "GameLevel.h"
 #include "Game/Game.h"
 #include "Actor/Player.h"
-#include "Actor/Block.h"
+#include "Actor/Ghost.h"
+#include "Actor/GrassBlock.h"
 #include "Core/Engine.h"
 #include "Settings/ObjectDefines.h"
 #include <iostream>
@@ -123,7 +124,7 @@ void GameLevel::SettingBackground()
 //맵 읽어오기
 void GameLevel::ReadMapFile(const char* filename)
 {
-	mapData = std::vector<std::vector<Actor*>>(16, std::vector<Actor*>(32, nullptr)); //맵데이터 벡터, 1청크 32x16
+	mapData = std::vector<std::vector<Actor*>>(MAP_HEIGHT, std::vector<Actor*>(MAP_WIDTH, nullptr)); //맵데이터 벡터, 1청크 32x16
 	//파일 읽어오기
 	char filepath[256] = { };
 	sprintf_s(filepath, 256, "../Assets/Maps/%s", filename);
@@ -179,7 +180,7 @@ void GameLevel::ReadMapFile(const char* filename)
 			// 위치에 맞게 mapData에 저장
 			if (gridPos.y >= 0 && gridPos.y < (int)mapData.size() &&
 				gridPos.x >= 0 && gridPos.x < (int)mapData[0].size()) {
-				Block* block = new Block(gridPos.x * 10, gridPos.y * 5);
+				GrassBlock* block = new GrassBlock(gridPos.x * 10, gridPos.y * 5);
 				AddActor(block);
 				mapData[gridPos.y][gridPos.x] = block;
 				//char buf[256];
@@ -191,6 +192,11 @@ void GameLevel::ReadMapFile(const char* filename)
 		case 'P': {
 			player = new Player(gridPos.x * 10, gridPos.y * 5);
 			AddActor(player);
+			break;
+		}
+		case 'G': {
+			Ghost* ghost = new Ghost(gridPos.x * 10, gridPos.y * 5);
+			AddActor(ghost);
 			break;
 		}
 		default:

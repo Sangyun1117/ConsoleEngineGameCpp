@@ -15,10 +15,7 @@ class Engine_API Actor : public RTTI
 	RTTI_DECLARATIONS(Actor, RTTI)
 
 public:
-	Actor(
-		const std::string& imageLink,
-		const Vector2& position = Vector2::Zero
-	);
+	Actor(const std::string& imageLink, const Vector2& position, const std::vector<std::vector<char>>& images, const std::vector<std::vector<Color>>& bgs, const std::vector<std::vector<Color>>& fgs);
 	virtual ~Actor();
 
 	// 이벤트 함수.
@@ -50,9 +47,10 @@ public:
 	// 객체 삭제 함수.
 	void Destroy();
 
-	void InitializeColors();  // 여기서 색상 초기화
+	//void InitializeColors();  // 여기서 색상 초기화
 
-	void LoadColorsImage(std::vector<std::vector<Color>>& colorGrid, const std::string& filePath);
+	//void LoadColorsImage(std::vector<std::vector<Color>>& colorGrid, const std::string& filePath);
+
 	// 게임 종료 요청 함수.
 	void QuitGame();
 
@@ -70,9 +68,12 @@ protected:
 
 	//이미지 (아스키 아트)
 	//std::vector<std::string> image;
-	std::vector<std::vector<char>>image;
-	std::vector<std::vector<Color>>fgColors;
-	std::vector<std::vector<Color>>bgColors;
+	//std::vector<std::vector<char>>image;
+	//std::vector<std::vector<Color>>fgColors;
+	//std::vector<std::vector<Color>>bgColors;
+	const std::vector<std::vector<char>> &asciiImages;
+	const std::vector<std::vector<Color>>& fgs;
+	const std::vector<std::vector<Color>>& bgs;
 	std::string imageLink;
 
 	int actionLevel = 0;

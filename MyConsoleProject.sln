@@ -14,9 +14,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "솔루션 항목", "솔루�
 		Assets\Maps\BasicMap.txt = Assets\Maps\BasicMap.txt
 		Assets\Maps\chunk_0_0.txt = Assets\Maps\chunk_0_0.txt
 		Settings\EngineSettings.txt = Settings\EngineSettings.txt
+		Assets\Images\Ghost.txt = Assets\Images\Ghost.txt
+		Assets\Colors\GhostColors.txt = Assets\Colors\GhostColors.txt
 		Assets\Images\GrassBlock.txt = Assets\Images\GrassBlock.txt
 		Assets\Colors\GrassBlockBgColors.txt = Assets\Colors\GrassBlockBgColors.txt
 		Assets\Images\Item.txt = Assets\Images\Item.txt
+		Assets\Colors\ItemColors.txt = Assets\Colors\ItemColors.txt
 		Assets\Images\Player.txt = Assets\Images\Player.txt
 		Assets\Colors\PlayerFgColors.txt = Assets\Colors\PlayerFgColors.txt
 	EndProjectSection

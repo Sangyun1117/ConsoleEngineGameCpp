@@ -14,6 +14,7 @@ public:
 	virtual void BeginPlay() override;
 	virtual void Tick(float deltaTime) override;
 	virtual void Render() override;
+	Vector2 GetPlayerPosition() { return player->GetPosition(); };
 	void SettingBackground(); //y값에 맞게 배경색 그려주는 함수.
 private:
 	//맵 파일을 읽어서 게임 객체 생성하는 함수

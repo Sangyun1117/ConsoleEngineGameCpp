@@ -1,9 +1,20 @@
 #include "Game.h"
 #include "Level/GameLevel.h"
 #include "Level//HomeLevel.h"
+#include "Core/ImageManager.h"
 //#include "Utils/Utils.h"
 Game::Game()
 {
+    // 이미지 매니저 가져오기
+    ImageManager& imgMgr = ImageManager::Get();
+    //이미지들 로드
+    if (!imgMgr.LoadImagesFromFolder("../Assets/Images", "../Assets/Colors")) {
+        std::cerr << "일부 이미지 로드 실패!\n";
+    }
+    //if (!imgMgr.LoadHardcodedImages()) {
+    //    std::cerr << "일부 이미지 로드 실패!\n";
+    //}
+
 	instance = this;
     //AddLevel(new GameLevel());
     menuLevel = new HomeLevel();

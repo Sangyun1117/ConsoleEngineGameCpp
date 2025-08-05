@@ -1,5 +1,5 @@
 #include "Player.h"
-#include "Block.h"
+#include "GrassBlock.h"
 #include "Engine.h"
 #include "Utils/Utils.h"
 #include "Settings/ActionDefines.h"
@@ -8,18 +8,22 @@
 #include "Math/Vector2.h"
 #include "Math/Color.h"
 #include "Settings//ObjectDefines.h"
+#include "Core/ImageManager.h"
 #include <windows.h>
 #include <cstdio>
 #include <vector>
 #include <fstream>
 #include <iostream>
 
-Player::Player(int x, int y) : Actor("../Assets/Images/AmongUs.txt")
+Player::Player(int x, int y) : Actor(std::string("../Assets/Images/AmongUs.txt"),Vector2(x, y), ImageManager::Get().GetImage("../Assets/Images/AmongUs.txt"), ImageManager::Get().GetColor("../Assets/Colors/PlayerFgColors.txt"), ImageManager::Get().GetColor("../Assets/Colors/PlayerFgColors.txt"))
 {
+	itemsImage = ImageManager::Get().GetImage(itemImageLink);
+	itemsFgColors = ImageManager::Get().GetColor(fgColorsImageLink);
+	itemsBgColors = ImageManager::Get().GetColor(bgColorsImageLink);
 	actionLevel = ACTION_IDLE;
-	LoadColorsImage(bgColors, bgColorsImageLink);
-	LoadItemsImage();
-	SetPosition(Vector2(x, y));
+	//LoadColorsImage(bgColors, bgColorsImageLink);
+	//LoadItemsImage();
+	//SetPosition(Vector2(x, y));
 	SetSortingOrder(10);
 	InventoryReset(); //인벤토리 0~9 까지 핸드로 초기화
 
@@ -124,15 +128,25 @@ void Player::Tick(float deltaTime)
 			//플레이어 중앙 위치
 			int playerCenterX = (position.x + PLAYER_WIDTH / 2) / BLOCKSIZE_WIDTH;
 			int playerCenterY = (position.y + PLAYER_HEIGHT / 2) / BLOCKSIZE_HEIGHT;
-			// 2. 플레이어와 2블록 이상 떨어지면 금지
+
+			// 플레이어 기준 ±2 칸 이내만 허용
+			constexpr int BUILD_LIMIT = 2;
+
 			int buildRangeX = abs(searchBlockX - playerCenterX);
 			int buildRangeY = abs(searchBlockY - playerCenterY);
-			if (buildRangeX > 2 || buildRangeY > 2) {
+			if (buildRangeX > BUILD_LIMIT || buildRangeY > BUILD_LIMIT) {
 				return; // 너무 멀어서 설치 금지
 			}
 			
 			GameLevel* mygl = dynamic_cast<GameLevel*>(GetOwner());
-			if (searchBlockX >= 0 && searchBlockX < MAP_WIDTH && searchBlockY >= 0 && searchBlockY < MAP_HEIGHT) {
+			int minX = max(0, playerCenterX - BUILD_LIMIT);
+			int maxX = min(MAP_WIDTH - 1, playerCenterX + BUILD_LIMIT);
+			int minY = max(0, playerCenterY - BUILD_LIMIT);
+			int maxY = min(MAP_HEIGHT - 1, playerCenterY + BUILD_LIMIT);
+			// searchBlock이 유효한지 다시 제한된 범위 안에서 검사
+			if (searchBlockX >= minX && searchBlockX <= maxX &&
+				searchBlockY >= minY && searchBlockY <= maxY)
+			{
 				if (mygl->mapData[searchBlockY][searchBlockX] != nullptr) {
 					mygl->mapData[searchBlockY][searchBlockX]->Destroy();
 					mygl->mapData[searchBlockY][searchBlockX] = nullptr;
@@ -165,20 +179,25 @@ void Player::Tick(float deltaTime)
 			//플레이어 중앙 위치
 			int playerCenterX = (position.x + PLAYER_WIDTH / 2) / BLOCKSIZE_WIDTH;
 			int playerCenterY = (position.y + PLAYER_HEIGHT / 2) / BLOCKSIZE_HEIGHT;
+
+
 			// 2. 플레이어와 2블록 이상 떨어지면 금지
 			int buildRangeX = abs(searchBlockX - playerCenterX);
 			int buildRangeY = abs(searchBlockY - playerCenterY);
 			if (buildRangeX > 2 || buildRangeY > 2) {
 				return; // 너무 멀어서 설치 금지
 			}
-
+			// 3. 맵 경계 내부인지 검사
+			if (searchBlockX < 0 || searchBlockX >= MAP_WIDTH ||
+				searchBlockY < 0 || searchBlockY >= MAP_HEIGHT) {
+				return;
+			}
+			// 4. 설치
 			GameLevel* mygl = dynamic_cast<GameLevel*>(GetOwner());
-			if (searchBlockX >= 0 && searchBlockX < MAP_WIDTH && searchBlockY >= 0 && searchBlockY < MAP_HEIGHT) {
-				if (mygl->mapData[searchBlockY][searchBlockX] == nullptr) {
-					Block* block = new Block(searchBlockX * 10, searchBlockY * 5);
-					mygl->AddActor(block);
-					mygl->mapData[searchBlockY][searchBlockX] = block;
-				}
+			if (mygl && mygl->mapData[searchBlockY][searchBlockX] == nullptr) {
+				GrassBlock* block = new GrassBlock(searchBlockX * BLOCKSIZE_WIDTH, searchBlockY * BLOCKSIZE_HEIGHT);
+				mygl->AddActor(block);
+				mygl->mapData[searchBlockY][searchBlockX] = block;
 			}
 		}
 	}
@@ -201,7 +220,7 @@ void Player::Render()
 {
 	Vector2 actorPos = { position.x - Engine::Get().cameraPos.x, position.y - Engine::Get().cameraPos.y };
 	
-	if (image.empty() || image[0].empty())
+	if (asciiImages.empty() || asciiImages[0].empty())
 		return;
 
 	//플레이어 렌더
@@ -212,12 +231,11 @@ void Player::Render()
 	}
 
 	int startRow = direction + animationLevel;
-	int drawHeight = 10; // 10줄 그린다고 가정
 
 	// 이미지와 색상에서 필요한 부분만 자름
-	auto sliceImage = Utils::Slice2DVector(image, startRow, 0, drawHeight, (int)image[0].size());
-	auto sliceFg = Utils::Slice2DVector(bgColors, startRow, 0, drawHeight, (int)bgColors[0].size());
-	auto sliceBg = Utils::Slice2DVector(bgColors, startRow, 0, drawHeight, (int)bgColors[0].size());
+	auto sliceImage = Utils::Slice2DVector(asciiImages, startRow, 0, PLAYER_HEIGHT, (int)asciiImages[0].size());
+	auto sliceFg = Utils::Slice2DVector(fgs, startRow, 0, PLAYER_HEIGHT, (int)fgs[0].size());
+	auto sliceBg = Utils::Slice2DVector(bgs, startRow, 0, PLAYER_HEIGHT, (int)bgs[0].size());
 	Engine::Get().WriteToBuffer(actorPos, sliceImage, sliceFg, sliceBg);
 	//for (int i = 0; i < 10; i++) {
 	//	Vector2 drawPos = { actorPos.x, actorPos.y + i };
@@ -241,7 +259,7 @@ void Player::Render()
 	int itemActionPoint = isItemAction ? 10 : 0;
 	if (itemLevel != ITEM_HAND) {
 		startRow = itemDirection + (itemLevel - 1) * 20 + itemActionPoint;
-		drawHeight = 5;
+		int drawHeight = 5; //아이템 높이
 
 		auto sliceImage = Utils::Slice2DVector(itemsImage, startRow, 0, drawHeight, (int)itemsImage[0].size());
 		auto sliceFg = Utils::Slice2DVector(itemsFgColors, startRow, 0, drawHeight, (int)itemsFgColors[0].size());

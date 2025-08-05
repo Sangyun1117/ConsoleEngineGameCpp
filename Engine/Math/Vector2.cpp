@@ -16,12 +16,6 @@ Vector2::Vector2(int x, int y)
 
 Vector2::~Vector2()
 {
-    if (value == nullptr)
-    {
-        return;
-    }
-
-    delete[] value;
 }
 
 Vector2 Vector2::operator+(const Vector2& other) const
@@ -55,17 +49,4 @@ Vector2::operator COORD() const
     coord.Y = (short)y;
 
     return coord;
-}
-
-const char* Vector2::ToString()
-{
-    // "(20, 30)" -> 문자열 조합.
-    if (value != nullptr)
-    {
-        delete[] value;
-    }
-
-    value = new char[1024];
-    sprintf_s(value, 1024, "(%d, %d)", x, y);
-    return value;
 }

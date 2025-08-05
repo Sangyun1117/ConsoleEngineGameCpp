@@ -1,11 +1,14 @@
 #pragma once
 
 //ªÁ¿Ã¡Ó
-#define MAP_WIDTH 32
-#define MAP_HEIGHT 16 
+#define MAP_WIDTH 64
+#define MAP_HEIGHT 32 
 
 #define PLAYER_WIDTH 16
 #define PLAYER_HEIGHT 10
+
+#define GHOST_WIDTH 24
+#define GHOST_HEIGHT 15
 
 #define BLOCKSIZE_WIDTH 10
 #define BLOCKSIZE_HEIGHT 5

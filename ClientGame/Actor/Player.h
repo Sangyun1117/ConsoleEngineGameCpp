@@ -9,6 +9,7 @@ public:
 	virtual void Tick(float deltaTime) override;
 	virtual void Render() override;
 	void Move(Vector2 delta);
+
 private:
 	//void LoadColorsImage();
 	void Attack();
@@ -16,8 +17,8 @@ private:
 	void LoadItemsImage();
 private:
 	//이미지
-	std::string fgColorsImageLink = "../Assets/Colors/PlayerFgColors.txt";
-	std::string bgColorsImageLink = "../Assets/Colors/PlayerFgColors.txt";
+	std::string fgColorsImageLink = "../Assets/Colors/ItemColors.txt";
+	std::string bgColorsImageLink = "../Assets/Colors/ItemColors.txt";
 	//중력 변수
 	bool isOnGround = false;
 	float velocityY = 0.0f; //속도
@@ -35,6 +36,10 @@ private:
 	float runTimer = 0.0f;
 	const float frameDelay = 0.05f; //프레임 딜레이 시간
 	bool isRunning = false;
+	//능력
+	int attackDamage = 0;
+	int hp = 100;
+
 	//아이템
 	std::string itemImageLink = "../Assets/Images/Item.txt";
 	std::vector<std::vector<char>> itemsImage;
