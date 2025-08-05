@@ -24,7 +24,7 @@ Player::Player(int x, int y) : Actor(std::string("../Assets/Images/AmongUs.txt")
 	//LoadColorsImage(bgColors, bgColorsImageLink);
 	//LoadItemsImage();
 	//SetPosition(Vector2(x, y));
-	SetSortingOrder(10);
+	SetSortingOrder(20);
 	InventoryReset(); //인벤토리 0~9 까지 핸드로 초기화
 
 }
@@ -200,6 +200,12 @@ void Player::Tick(float deltaTime)
 				mygl->mapData[searchBlockY][searchBlockX] = block;
 			}
 		}
+		else if (itemLevel == ITEM_SOARD) {
+			isItemAction = true;
+			actionLevel = ACTION_ATTACK;
+			actionTimer = 0.0f; //타이머 초기화
+			actionDuration = 0.2f; //지속시간 설정
+		}
 	}
 
 	if (actionLevel != ACTION_IDLE) {
@@ -352,6 +358,7 @@ void Player::InventoryReset() {
 	}
 	inventory[1] = ITEM_PICKAXE;
 	inventory[2] = ITEM_GRASS_BLOCK;
+	inventory[3] = ITEM_SOARD;
 }
 
 void Player::LoadItemsImage()

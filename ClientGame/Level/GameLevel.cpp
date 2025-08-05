@@ -96,7 +96,7 @@ void GameLevel::SettingBackground()
 
 	int screenWidth = Engine::Get().GetScreenWidth();
 	int screenHeight = Engine::Get().GetScreenHeight();
-	int groundLine = 40;
+	int groundLine = 55;
 	for (int y = 0; y < Engine::Get().GetScreenHeight(); ++y)
 	{
 		nowColor = (Engine::Get().cameraPos.y + y >= groundLine) ? groundColor : skyColor;

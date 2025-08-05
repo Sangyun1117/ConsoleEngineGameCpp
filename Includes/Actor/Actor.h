@@ -60,7 +60,7 @@ public:
 
 	// 삭제 요청됐는지 알려주는 변수.
 	bool isExpired = false;
-	// 정렬 순서.
+
 
 protected:
 	// 개체의 위치.
@@ -80,7 +80,8 @@ protected:
 
 	// BeginPlay 호출이 되었는지 확인.
 	bool hasBeganPlay = false;
-
+	
+	// 정렬 순서.
 	unsigned int sortingOrder = 0;
 
 	// 소유 레벨(오너십).

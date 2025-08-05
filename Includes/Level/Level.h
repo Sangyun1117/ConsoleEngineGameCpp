@@ -6,6 +6,7 @@
 #include "UI/UIElement.h"
 
 class Actor;
+class Block;
 class Engine_API Level : public RTTI
 {
 	RTTI_DECLARATIONS(Level, RTTI)
