@@ -1,30 +1,60 @@
-       75KdPqUi         
-      si000000:r        
-     gu000.0000LL       
-    .g:00BBB00RBB       
-    r5r00LZs00vK1:      
-    Zri0.r.::i::sr      
-   Lv:.0.QBBBQBBb:      
- :ZQi.0000r1UEJ0J       
- :KMDP  :      L.       
-   7Dv7EMr7Er:vqLEriiqD5
-  .qi..MB.05BBPgPZQ7SBBZ
-       .bY.bv   ..   Br7
-                    :B5r
-                   .BBI 
-                  uB5   
-          r2KqdmSr      
-         7:      is     
-        u7    .   Id    
-        BBZ  BBB .:R    
-       i1dr  UD7  rKi   
-       vv::i::.r. irE   
-       idQBBBBBB  .:s7  
-        j UE11i    :iQd:
-        .v      :  EZMS.
-UPgKiirDvPv:7E77QP7Ygr  
- BBB2vQZPgPBBj .BE :rq. 
- uvB        Jq.uP.      
- j5B.        ..         
-  SBB                   
-   .KBs                  
+       77FFFFFF         
+      7FFFFFFFFF        
+     7FF44FFF44FF       
+    77FF44FFF4FFF       
+    77FFFFFFFFFFFF      
+    77FFF8F888F8FF      
+   77FFFFF88888FFF      
+ 7777FFFFFFFFFFFF       
+ 77777  7      FF       
+   888888888888888888888
+  77777777 7777788888888
+       FFFFFF   FF   000
+                    4000
+                   4000 
+                  400   
+       77FFFFFF         
+      7FFFFFFFFF        
+     7FF44FFF48800      
+    77FF44FFF884000     
+    77FFFFFF88F44000    
+    77FFF88888F84000   
+   77FFFF888888FF400    
+ 7777FFF88FFFFFFF       
+ 77777 88FFFF FFF       
+   77788      FFF 
+  7777FFFF FFFF
+       FFFFF      
+                    
+                    
+                     
+          FFFFFF77      
+         FFFFFFFFF7     
+        FF44FFF44F77    
+        FF44FFF44FF7    
+       FFFFFFFFFFFF77   
+       FF8F888F8FFFF7   
+       FFF88888FFFFFF7  
+        FFFFFFFFFFFFFF77
+        FF      F  FFF77
+8888888888888888888888  
+88888FFFFFFFF FFF FFFF 
+ 000        FFFFFF       
+  004        FF         
+   04                   
+    044                  
+          77774777      
+         77      77     
+        77    4   77    
+        777  777 777    
+       7777  777  777   
+       7777777777 777   
+       777777777  7777  
+        7 77777    77777
+        77      7  77777
+7777777777777777777777  
+ 7777777777777 777 7777 
+ 777        777777       
+ 7777        77         
+  777                   
+   7777                  

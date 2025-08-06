@@ -15,8 +15,9 @@
 #include <fstream>
 #include <iostream>
 
-Player::Player(int x, int y) : Actor(std::string("../Assets/Images/AmongUs.txt"),Vector2(x, y), ImageManager::Get().GetImage("../Assets/Images/AmongUs.txt"), ImageManager::Get().GetColor("../Assets/Colors/PlayerFgColors.txt"), ImageManager::Get().GetColor("../Assets/Colors/PlayerFgColors.txt"))
+Player::Player(int x, int y) : Actor(std::string("../Assets/Images/AmongUs.txt"), Vector2(x, y), ImageManager::Get().GetImage("../Assets/Images/AmongUs.txt"), ImageManager::Get().GetColor("../Assets/Colors/PlayerFgColors.txt"), ImageManager::Get().GetColor("../Assets/Colors/PlayerFgColors.txt"))
 {
+	SetSize(PLAYER_WIDTH, PLAYER_HEIGHT);
 	itemsImage = ImageManager::Get().GetImage(itemImageLink);
 	itemsFgColors = ImageManager::Get().GetColor(fgColorsImageLink);
 	itemsBgColors = ImageManager::Get().GetColor(bgColorsImageLink);
@@ -31,8 +32,11 @@ Player::Player(int x, int y) : Actor(std::string("../Assets/Images/AmongUs.txt")
 
 void Player::Tick(float deltaTime)
 {
-	super::Tick(deltaTime);
-
+	//super::Tick(deltaTime);
+	if (hp <= 0) {
+		static_cast<Game&>(Engine::Get()).QuitLevel();
+		return;
+	}
 	// 중력 처리
 	velocityY += gravity;
 	yFloat += velocityY;
@@ -90,7 +94,7 @@ void Player::Tick(float deltaTime)
 		runFrame = 0;
 	}
 
-	
+
 	for (int i = 0; i <= 9; i++) { //인벤토리 아이템 선택
 		if (Input::Get().GetKey('0' + i)) {
 			itemLevel = inventory[i];
@@ -98,10 +102,10 @@ void Player::Tick(float deltaTime)
 		}
 	}
 
-	if (Input::Get().GetKeyDown(VK_ESCAPE))
-	{
-		Game::Get().Quit();
-	}
+	//if (Input::Get().GetKeyDown(VK_ESCAPE))
+	//{
+	//	Game::Get().Quit();
+	//}
 	if (Input::Get().GetKeyDown(VK_CONTROL))
 	{
 		gravity = 0.0f;
@@ -114,6 +118,7 @@ void Player::Tick(float deltaTime)
 		//	actionTimer = 0.0f; //타이머 초기화
 		//	actionDuration = 0.2f; //지속시간 설정
 		//}
+		GameLevel* mygl = dynamic_cast<GameLevel*>(GetOwner());
 		if (itemLevel == ITEM_PICKAXE) {
 			isItemAction = true;
 			actionLevel = ACTION_ATTACK;
@@ -124,7 +129,7 @@ void Player::Tick(float deltaTime)
 			Vector2 realPosition = Engine::Get().cameraPos + nowMousePosition;
 			int searchBlockX = realPosition.x / 10;
 			int searchBlockY = realPosition.y / 5;
-			
+
 			//플레이어 중앙 위치
 			int playerCenterX = (position.x + PLAYER_WIDTH / 2) / BLOCKSIZE_WIDTH;
 			int playerCenterY = (position.y + PLAYER_HEIGHT / 2) / BLOCKSIZE_HEIGHT;
@@ -137,8 +142,8 @@ void Player::Tick(float deltaTime)
 			if (buildRangeX > BUILD_LIMIT || buildRangeY > BUILD_LIMIT) {
 				return; // 너무 멀어서 설치 금지
 			}
-			
-			GameLevel* mygl = dynamic_cast<GameLevel*>(GetOwner());
+
+
 			int minX = max(0, playerCenterX - BUILD_LIMIT);
 			int maxX = min(MAP_WIDTH - 1, playerCenterX + BUILD_LIMIT);
 			int minY = max(0, playerCenterY - BUILD_LIMIT);
@@ -148,8 +153,8 @@ void Player::Tick(float deltaTime)
 				searchBlockY >= minY && searchBlockY <= maxY)
 			{
 				if (mygl->mapData[searchBlockY][searchBlockX] != nullptr) {
-					mygl->mapData[searchBlockY][searchBlockX]->Destroy();
-					mygl->mapData[searchBlockY][searchBlockX] = nullptr;
+					//mygl->mapData[searchBlockY][searchBlockX]->Destroy();
+					SafeDelete(mygl->mapData[searchBlockY][searchBlockX]);
 				}
 			}
 		}
@@ -193,18 +198,30 @@ void Player::Tick(float deltaTime)
 				return;
 			}
 			// 4. 설치
-			GameLevel* mygl = dynamic_cast<GameLevel*>(GetOwner());
+
 			if (mygl && mygl->mapData[searchBlockY][searchBlockX] == nullptr) {
 				GrassBlock* block = new GrassBlock(searchBlockX * BLOCKSIZE_WIDTH, searchBlockY * BLOCKSIZE_HEIGHT);
-				mygl->AddActor(block);
+				//mygl->AddActor(block);
 				mygl->mapData[searchBlockY][searchBlockX] = block;
 			}
 		}
-		else if (itemLevel == ITEM_SOARD) {
+		else if (itemLevel == ITEM_SWORD) {
 			isItemAction = true;
 			actionLevel = ACTION_ATTACK;
 			actionTimer = 0.0f; //타이머 초기화
 			actionDuration = 0.2f; //지속시간 설정
+
+			for (Actor* other : mygl->GetActors()) {
+				if (other == this)
+					continue;
+				Vector2 myTL = isRight ? Vector2(position.x + width - BLOCKSIZE_WIDTH / 2, position.y) : Vector2(position.x - BLOCKSIZE_WIDTH / 2, position.y);
+				Vector2 myBR = isRight ? Vector2(position.x + width + BLOCKSIZE_WIDTH / 2, position.y + height) : Vector2(position.x + BLOCKSIZE_WIDTH / 2, position.y + height);
+				Vector2 otherTL = other->GetPosition();
+				Vector2 otherBR = { other->GetPosition().x + other->GetWidth(), other->GetPosition().y + other->GetHeight() };
+
+				if (isIntersect(myTL, myBR, otherTL, otherBR))
+					Attack(other);
+			}
 		}
 	}
 
@@ -225,7 +242,7 @@ void Player::Tick(float deltaTime)
 void Player::Render()
 {
 	Vector2 actorPos = { position.x - Engine::Get().cameraPos.x, position.y - Engine::Get().cameraPos.y };
-	
+
 	if (asciiImages.empty() || asciiImages[0].empty())
 		return;
 
@@ -243,20 +260,6 @@ void Player::Render()
 	auto sliceFg = Utils::Slice2DVector(fgs, startRow, 0, PLAYER_HEIGHT, (int)fgs[0].size());
 	auto sliceBg = Utils::Slice2DVector(bgs, startRow, 0, PLAYER_HEIGHT, (int)bgs[0].size());
 	Engine::Get().WriteToBuffer(actorPos, sliceImage, sliceFg, sliceBg);
-	//for (int i = 0; i < 10; i++) {
-	//	Vector2 drawPos = { actorPos.x, actorPos.y + i };
-	//	// 화면 밖이면 그리지 않음
-	//	if (drawPos.x < 0 || drawPos.x >= Engine::Get().GetScreenWidth() ||
-	//		drawPos.y < 0 || drawPos.y >= Engine::Get().GetScreenHeight())
-	//	{
-	//		continue;
-	//	}
-
-	//	//const std::string line = image[i + direction + actionLevel]; //i: 줄, direction: 방향, adctionLevel: 액션이미지
-	//	//const std::string line = image[i + direction + animationLevel]; //i: 줄, direction: 방향, animationLevel: 애니메이션프레임
-	//	//line.c_str()은 char형의 주소반환. 새로운 메모리를 할당하는 것이 아닌 string을 가리키는 것. 따로 delete 하지 말기
-	//	//Engine::Get().WriteToBuffer(drawPos, line.c_str(), color);
-	//}
 
 	//아이템 렌더
 	int itemDirection = isRight ? 0 : 5;
@@ -275,20 +278,12 @@ void Player::Render()
 		Engine::Get().WriteToBuffer(itemDrawPos, sliceImage, sliceFg, sliceBg);
 	}
 
-	//if (itemLevel != ITEM_HAND) {
-	//	for (int i = 0; i < 5; i++) {
-	//		Vector2 drawPos = { actorPos.x + itemPosX, actorPos.y + i + itemPosY };
-	//		// 화면 밖이면 그리지 않음
-	//		if (drawPos.x < 0 || drawPos.x >= Engine::Get().GetScreenWidth() ||
-	//			drawPos.y < 0 || drawPos.y >= Engine::Get().GetScreenHeight())
-	//		{
-	//			continue;
-	//		}
-	//		//const std::string line = itemsImage[i + itemDirection + (itemLevel-1)*20 + itemActionPoint]; //i: 줄, direction: 방향, Level: 아이템종류, actionPoint: 액션중인지
-	//		//line.c_str()은 char형의 주소반환. 새로운 메모리를 할당하는 것이 아닌 string을 가리키는 것. 따로 delete 하지 말기
-	//		//Engine::Get().WriteToBuffer(drawPos, line.c_str(), Color::White);
-	//	}
+	//인벤토리 렌더
+	//for (int i = 0; i < inventory.size(); ++i ) {
 	//}
+
+	//Vector2 inventoryDrawPos = { InventoryX + 3,InventoryY+2 };
+	//Engine::Get().WriteToBuffer(inventoryDrawPos,"곡괭이", Color::Black, Color::White);
 }
 
 void Player::Move(Vector2 delta)
@@ -322,34 +317,15 @@ void Player::Move(Vector2 delta)
 	Engine::Get().cameraPos = Engine::Get().cameraPos + delta;
 }
 
-//void Player::LoadColorsImage()
-//{
-//	std::ifstream file(fgColorsImageLink);
-//	if (!file.is_open()) {
-//		std::cerr << "파일을 열 수 없습니다: " << fgColorsImageLink << std::endl;
-//		return;
-//	}
-//
-//	std::string line;
-//	int y = 0;
-//
-//	while (std::getline(file, line)) {
-//		if (y >= fgColors.size()) //만약 사이즈가 초과하는 오류가 생김을 방지
-//			break;
-//		for (int x = 0; x < std::min<int>(line.size(), fgColors[y].size()); ++x) {
-//			Color c = ConvertHexCharToColor(line[x]);
-//			if (c != Color::Transparent) {
-//				fgColors[y][x] = c;
-//				bgColors[y][x] = c;
-//			}
-//		}
-//		y++;
-//	}
-//}
-
-void Player::Attack()
+void Player::Attack(Actor* other)
 {
-	actionLevel = ACTION_ATTACK;
+	other->Move(isRight ? Vector2(BLOCKSIZE_WIDTH, 0) : Vector2(BLOCKSIZE_WIDTH * (-1), 0));
+	other->OnAttacked(attackDamage);
+}
+
+void Player::OnAttacked(int damage)
+{
+	SetHp(hp - damage);
 }
 
 void Player::InventoryReset() {
@@ -358,7 +334,7 @@ void Player::InventoryReset() {
 	}
 	inventory[1] = ITEM_PICKAXE;
 	inventory[2] = ITEM_GRASS_BLOCK;
-	inventory[3] = ITEM_SOARD;
+	inventory[3] = ITEM_SWORD;
 }
 
 void Player::LoadItemsImage()

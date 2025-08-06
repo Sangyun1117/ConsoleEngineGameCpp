@@ -5,17 +5,27 @@
 #include "Actor/GrassBlock.h"
 #include "Core/Engine.h"
 #include "Settings/ObjectDefines.h"
+#include "Core/Core.h"
+#include "UI/InventoryUI.h"
 #include <iostream>
 #include <string>
-#include "Core/Core.h"
 GameLevel::GameLevel()
 {
 	//ReadMapFile("BasicMap.txt");
 	ReadMapFile("chunk_0_0.txt");
+	InventoryUI* hpUI = new InventoryUI(InventoryX, InventoryY);
+	AddUI(hpUI);
 }
 
 GameLevel::~GameLevel()
 {
+	for (auto& row : mapData) {
+		for (auto& blockPtr : row) {
+			SafeDelete(blockPtr); // new Block() 해제
+		}
+		row.clear();
+	}
+	mapData.clear();
 	//super::~Level();
 	//mapData.clear();
 	player = nullptr;
@@ -29,13 +39,25 @@ void GameLevel::BeginPlay()
 void GameLevel::Tick(float deltaTime)
 {
 	super::Tick(deltaTime);
+	if (Input::Get().GetKeyDown(VK_ESCAPE))
+	{
+		static_cast<Game&>(Engine::Get()).ToggleMenu();
+		//static_cast<Game&>(Engine::Get()).QuitLevel();
+	}
 }
 
 void GameLevel::Render()
 {
 	//super::Render();
-
 	SettingBackground();
+	
+	for (auto blockRow : mapData) {
+		for (Block* block : blockRow) {
+			if(block!=nullptr)
+				block->Render();
+		}
+	}
+
 	// 그리기 전에 정렬 순서 기준으로 재배치(정렬).
 	SortActorsBySortingOrder();
 
@@ -81,7 +103,12 @@ void GameLevel::Render()
 		actor->Render();
 	}
 
-
+	// UI 렌더링
+	for (UIElement* const ui : uiElements)
+	{
+		if (!ui->isVisible) continue;
+		ui->Render();
+	}
 
 }
 
@@ -124,7 +151,7 @@ void GameLevel::SettingBackground()
 //맵 읽어오기
 void GameLevel::ReadMapFile(const char* filename)
 {
-	mapData = std::vector<std::vector<Actor*>>(MAP_HEIGHT, std::vector<Actor*>(MAP_WIDTH, nullptr)); //맵데이터 벡터, 1청크 32x16
+	mapData = std::vector<std::vector<Block*>>(MAP_HEIGHT, std::vector<Block*>(MAP_WIDTH, nullptr)); //맵데이터 벡터, 1청크 32x16
 	//파일 읽어오기
 	char filepath[256] = { };
 	sprintf_s(filepath, 256, "../Assets/Maps/%s", filename);
@@ -181,7 +208,7 @@ void GameLevel::ReadMapFile(const char* filename)
 			if (gridPos.y >= 0 && gridPos.y < (int)mapData.size() &&
 				gridPos.x >= 0 && gridPos.x < (int)mapData[0].size()) {
 				GrassBlock* block = new GrassBlock(gridPos.x * 10, gridPos.y * 5);
-				AddActor(block);
+				//AddActor(block);
 				mapData[gridPos.y][gridPos.x] = block;
 				//char buf[256];
 				//sprintf_s(buf, sizeof(buf), "디버그 로그: x: %d, y: %d\n", gridPos.x, gridPos.y);

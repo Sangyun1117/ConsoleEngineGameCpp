@@ -1,7 +1,7 @@
 #pragma once
 
 //사이즈
-#define MAP_WIDTH 64
+#define MAP_WIDTH 128
 #define MAP_HEIGHT 32 
 
 #define PLAYER_WIDTH 16
@@ -16,5 +16,9 @@
 //아이템
 #define ITEM_HAND 0
 #define ITEM_PICKAXE 1
-#define ITEM_SOARD 2
+#define ITEM_SWORD 2
 #define ITEM_GRASS_BLOCK 3
+
+//UI
+#define InventoryX 30
+#define InventoryY 33

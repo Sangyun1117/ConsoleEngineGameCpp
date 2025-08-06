@@ -36,10 +36,13 @@
     <ClCompile Include="Actor\GrassBlock.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="UI\PlayerHpUI.cpp">
+    <ClCompile Include="UI\InventoryUI.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Actor\Ghost.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Level\PauseLevel.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
@@ -62,10 +65,13 @@
     <ClInclude Include="Actor\GrassBlock.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="UI\PlayerHpUI.h">
+    <ClInclude Include="UI\InventoryUI.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Actor\Ghost.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Level\PauseLevel.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

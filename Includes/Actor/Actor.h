@@ -32,11 +32,18 @@ public:
 	// BeginPlay 호출 여부 확인.
 	inline bool HasBeganPlay() const { return hasBeganPlay; }
 
+	//위치 이동 시키는 함수
+	virtual void OnAttacked(int damage);
+	virtual void Move(Vector2 delta);
 	// 위치 설정/값 읽는 함수.
 	void SetPosition(const Vector2& newPosition);
 	void SetPosition(int x, int y);
 	Vector2 GetPosition() const;
-
+	int GetWidth() { return width; };
+	int GetHeight() { return height; };
+	void SetSize(int w, int h) { width = w; height = h; };
+	int GetHp() { return hp; };
+	void SetHp(int newHp) { hp = newHp; };
 	// Sorting Order 설정.
 	void SetSortingOrder(unsigned int sortingOrder);
 	unsigned int GetSortingOrder() { return sortingOrder; }
@@ -50,6 +57,8 @@ public:
 	//void InitializeColors();  // 여기서 색상 초기화
 
 	//void LoadColorsImage(std::vector<std::vector<Color>>& colorGrid, const std::string& filePath);
+
+	bool isIntersect(Vector2 myIntersectTL, Vector2 myIntersectBR, Vector2 otherRangeTR, Vector2 otherRangeBR);
 
 	// 게임 종료 요청 함수.
 	void QuitGame();
@@ -65,13 +74,16 @@ public:
 protected:
 	// 개체의 위치.
 	Vector2 position;
+	int width = 0;
+	int height = 0;
+	int hp = 100;
 
 	//이미지 (아스키 아트)
 	//std::vector<std::string> image;
 	//std::vector<std::vector<char>>image;
 	//std::vector<std::vector<Color>>fgColors;
 	//std::vector<std::vector<Color>>bgColors;
-	const std::vector<std::vector<char>> &asciiImages;
+	const std::vector<std::vector<char>>& asciiImages;
 	const std::vector<std::vector<Color>>& fgs;
 	const std::vector<std::vector<Color>>& bgs;
 	std::string imageLink;
@@ -80,7 +92,7 @@ protected:
 
 	// BeginPlay 호출이 되었는지 확인.
 	bool hasBeganPlay = false;
-	
+
 	// 정렬 순서.
 	unsigned int sortingOrder = 0;
 

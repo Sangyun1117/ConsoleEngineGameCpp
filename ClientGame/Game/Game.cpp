@@ -68,3 +68,11 @@ void Game::CleanUp()
     //mainLevel = nullptr;
 	//Engine::CleanUp();
 }
+
+void Game::QuitLevel()
+{
+    showHome = true;
+    mainLevel = menuLevel;
+    SafeDelete(backLevel);
+    backLevel = new GameLevel();
+}

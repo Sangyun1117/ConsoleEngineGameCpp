@@ -27,6 +27,7 @@ Level::~Level()
 
 	for (UIElement* ui : uiElements)
 	{
+		ui->SetOwner(nullptr);
 		SafeDelete(ui);
 	}
 	uiElements.clear();
@@ -138,11 +139,11 @@ void Level::Render()
 	}
 
 	// UI ·»´õ¸µ
-	for (UIElement* const ui : uiElements)
-	{
-		if (!ui->isVisible) continue;
-		ui->Render();
-	}
+	//for (UIElement* const ui : uiElements)
+	//{
+	//	if (!ui->isVisible) continue;
+	//	ui->Render();
+	//}
 
 }
 
@@ -188,6 +189,7 @@ void Level::ProcessAddAndDestroyActors()
 void Level::AddUI(UIElement* newUI)
 {
 	uiElements.push_back(newUI);
+	newUI->SetOwner(this);
 }
 
 void Level::SortActorsBySortingOrder()

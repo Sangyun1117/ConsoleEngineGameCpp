@@ -8,11 +8,14 @@ public:
 	Player(int x = 0, int y = 0);
 	virtual void Tick(float deltaTime) override;
 	virtual void Render() override;
-	void Move(Vector2 delta);
-
+	void Move(Vector2 delta) override;
+	void OnAttacked(int damage) override;
+	const std::vector<int>& GetInventory() const {
+		return inventory;
+	}
 private:
 	//void LoadColorsImage();
-	void Attack();
+	void Attack(Actor *other);
 	void InventoryReset();
 	void LoadItemsImage();
 private:
@@ -37,8 +40,7 @@ private:
 	const float frameDelay = 0.05f; //프레임 딜레이 시간
 	bool isRunning = false;
 	//능력
-	int attackDamage = 0;
-	int hp = 100;
+	int attackDamage = 1;
 
 	//아이템
 	std::string itemImageLink = "../Assets/Images/Item.txt";

@@ -17,8 +17,7 @@ Block::~Block()
 }
 
 // 프레임 마다 호출 (반복성 작업/지속성이 필요한 작업).
-void Block::Tick(float deltaTime)
-{
+void Block::Tick(float deltaTime) {
 }
 
 void Block::Render()

@@ -13,6 +13,36 @@
                     4000
                    4000 
                   400   
+       77FFFFFF         
+      7FFFFFFFFF        
+     7FF44FFF48800      
+    77FF44FFF884000     
+    77FFFFFF88F44000    
+    77FFF88888F84000   
+   77FFFF888888FF400    
+ 7777FFF88FFFFFFF       
+ 77777 88FFFF FFF       
+   77788      FFF 
+  7777FFFF FFFF
+       FFFFF      
+                    
+                    
+                     
+          FFFFFF77      
+         FFFFFFFFF7     
+        FF44FFF44F77    
+        FF44FFF44FF7    
+       FFFFFFFFFFFF77   
+       FF8F888F8FFFF7   
+       FFF88888FFFFFF7  
+        FFFFFFFFFFFFFF77
+        FF      F  FFF77
+8888888888888888888888  
+88888FFFFFFFF FFF FFFF 
+ 000        FFFFFF       
+  004        FF         
+   04                   
+    044                  
           77774777      
          77      77     
         77    4   77    

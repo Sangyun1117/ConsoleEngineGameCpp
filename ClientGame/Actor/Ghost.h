@@ -3,13 +3,14 @@
 #include "Settings/ObjectDefines.h"
 class Ghost : public Actor {
 	RTTI_DECLARATIONS(Ghost, Actor)
+public:
 	Ghost(int x = 0, int y = 0);
 	virtual void Tick(float deltaTime) override;
 	virtual void Render() override;
-	void Move(Vector2 delta);
+	void Move(Vector2 delta) override;
 private:
-	void Attack();
-
+	void Attack(Actor* other);
+	void OnAttacked(int damage);
 private:
 	//능력
 	float moveSpeed = 0.5f; //이동속도
@@ -22,12 +23,23 @@ private:
 	std::string bgColorsImageLink = "../Assets/Colors/GhostColors.txt";
 	//캐릭터 좌우 판단
 	bool isRight = true;
-	//캐릭터 액션
-	float actionTimer = 0.0f;  // 액션 지속 시간 타이머
-	float actionDuration = 1.0f;  // 액션 지속 시간
+	bool isHit = false;
+	//타이머
+	float hitTimer = 0.0f; //피격 지속 시간 타이머
+	float hitDuration = 0.5f;
 	//캐릭터 이동 애니메이션
 	int runFrame = 0;
 	float runTimer = 0.0f;
 	const float frameDelay = 0.05f; //프레임 딜레이 시간
 	bool isRunning = false;
+
+	//캐릭터 공격
+	int attackDamage = 50;
+
+	float attackTimer = 0.0f;  // 액션 지속 시간 타이머
+	float attackDuration = 0.5f;
+	bool isAttack = false;
+	bool canAttack = true;
+	float cooldownTimer = 0.0f;
+	float cooldownDuration = 1.0f; //공격 후 대기시간
 };

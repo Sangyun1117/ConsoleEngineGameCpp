@@ -11,6 +11,7 @@ public:
 	void ToggleMenu();
 	//Todo: 글자 단위 렌더 구현
 	virtual void CleanUp() override;
+	void QuitLevel();
 private:
 	//메뉴 레벨
 	Level* menuLevel = nullptr;

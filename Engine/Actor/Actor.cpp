@@ -25,7 +25,7 @@
 //}
 
 Actor::Actor(const std::string& imageLink, const Vector2& position, const std::vector<std::vector<char>>& images, const std::vector<std::vector<Color>>& bgs, const std::vector<std::vector<Color>>& fgs)
-	: imageLink(imageLink), position(position), asciiImages(images), bgs(bgs), fgs(fgs){
+	: imageLink(imageLink), position(position), asciiImages(images), bgs(bgs), fgs(fgs) {
 	//std::ifstream file(imageLink);
 	//if (!file.is_open()) {
 	//	std::cerr << "파일을 열 수 없습니다: " << imageLink << std::endl;
@@ -71,6 +71,9 @@ void Actor::BeginPlay()
 // 프레임 마다 호출 (반복성 작업/지속성이 필요한 작업).
 void Actor::Tick(float deltaTime)
 {
+	if (hp <= 0) {
+		Destroy();
+	}
 }
 
 // 그리기 함수.
@@ -106,6 +109,8 @@ void Actor::Render()
 
 	Engine::Get().WriteToBuffer(actorPos, asciiImages, fgs, bgs);
 }
+void Actor::OnAttacked(int damage) {}
+void Actor::Move(Vector2 delta) { }
 
 void Actor::SetPosition(const Vector2& newPosition)
 {
@@ -190,6 +195,13 @@ void Actor::Destroy()
 //		y++;
 //	}
 //}
+
+bool Actor::isIntersect(Vector2 myIntersectTL, Vector2 myIntersectBR, Vector2 otherRangeTL, Vector2 otherRangeBR)
+{
+	if (myIntersectTL.x > otherRangeBR.x || myIntersectBR.x < otherRangeTL.x || myIntersectTL.y > otherRangeBR.y || myIntersectBR.y < otherRangeTL.y)
+		return false;
+	return true;
+}
 
 void Actor::QuitGame()
 {

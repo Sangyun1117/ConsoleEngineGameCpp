@@ -16,7 +16,7 @@ BOOL WINAPI Engine::ConsoleHandler(DWORD signal)
 	{
 		Engine::Get().CleanUp();
 		//g_isQuitByConsole = true;
-		
+
 		_CrtDumpMemoryLeaks();
 		return TRUE;
 	}

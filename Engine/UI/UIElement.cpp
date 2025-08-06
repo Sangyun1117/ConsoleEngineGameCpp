@@ -1,20 +1,45 @@
 #include "UIElement.h"
-#include <fstream>
+#include "Math/Color.h"
+#include "Math/Vector2.h"
 #include <iostream>
-#include <locale>
-#include <codecvt>  // C++17 이전에서는 필요
+#include <vector>
 
-UIElement::UIElement(const std::string& imageLink) : imageLink(imageLink)
+UIElement::UIElement(const std::string& imageLink, const Vector2& position, const std::vector<std::vector<char>>& images, const std::vector<std::vector<Color>>& bgs, const std::vector<std::vector<Color>>& fgs)
+	: imageLink(imageLink), position(position), asciiImages(images), bgs(bgs), fgs(fgs) {
+}
+
+
+UIElement::~UIElement() {
+
+}
+
+void UIElement::Tick(float deltaTime)
 {
-    std::ifstream file(imageLink);
-    if (!file.is_open()) {
-        std::cerr << "파일을 열 수 없습니다: " << imageLink << std::endl;
-        return;
-    }
+}
 
-    std::string line;
-    size_t maxWidth = 0;
-    std::vector<std::string> tempLines;
+void UIElement::Render() {
+	if (position.x >= Engine::Get().GetScreenWidth() || position.y >= Engine::Get().GetScreenHeight())
+		return;
+	Engine::Get().WriteToBuffer(position, asciiImages, fgs, bgs);
+}
 
-    file.close();
+void UIElement::SetPosition(const Vector2& newPosition)
+{
+	position = newPosition;
+}
+void UIElement::SetPosition(int x, int y) {
+	position = { x,y };
+}
+Vector2 UIElement::GetPosition() const
+{
+	return position;
+}
+
+void UIElement::SetOwner(Level* newOwner) {
+	owner = newOwner;
+}
+
+Level* UIElement::GetOwner()
+{
+	return owner;
 }
