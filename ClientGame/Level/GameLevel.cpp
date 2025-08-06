@@ -3,6 +3,7 @@
 #include "Actor/Player.h"
 #include "Actor/Ghost.h"
 #include "Actor/GrassBlock.h"
+#include "Actor/GroundBlock.h"
 #include "Core/Engine.h"
 #include "Settings/ObjectDefines.h"
 #include "Core/Core.h"
@@ -213,6 +214,15 @@ void GameLevel::ReadMapFile(const char* filename)
 				//char buf[256];
 				//sprintf_s(buf, sizeof(buf), "디버그 로그: x: %d, y: %d\n", gridPos.x, gridPos.y);
 				//OutputDebugStringA(buf);
+			}
+			break;
+		}
+		case 'L': {
+			// 위치에 맞게 mapData에 저장
+			if (gridPos.y >= 0 && gridPos.y < (int)mapData.size() &&
+				gridPos.x >= 0 && gridPos.x < (int)mapData[0].size()) {
+				GroundBlock* block = new GroundBlock(gridPos.x * 10, gridPos.y * 5);
+				mapData[gridPos.y][gridPos.x] = block;
 			}
 			break;
 		}

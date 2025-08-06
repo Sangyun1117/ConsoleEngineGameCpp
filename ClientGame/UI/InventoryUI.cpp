@@ -5,10 +5,10 @@
 #include "Settings/ObjectDefines.h"
 
 
-InventoryUI::InventoryUI(int x, int y) 
+InventoryUI::InventoryUI(int x, int y)
 	: UIElement("../Assets/Images/InventoryUI.txt", Vector2(x, y), ImageManager::Get().GetImage("../Assets/Images/InventoryUI.txt"), ImageManager::Get().GetColor("../Assets/Colors/InventoryUIBgColors.txt"), ImageManager::Get().GetColor("../Assets/Colors/InventoryUIFgColors.txt"))
 {
-	
+
 }
 
 void InventoryUI::Render()
@@ -19,7 +19,7 @@ void InventoryUI::Render()
 
 	const std::vector<int>& inv = static_cast<GameLevel*>(owner)->player->GetInventory();
 
-	Vector2 itemPos = { position.x+2, position.y + 2 };
+	Vector2 itemPos = { position.x + 2, position.y + 2 };
 	for (int i : inv) {
 		if (i != ITEM_HAND) {
 			const std::string itemName = GetItemName(i);
@@ -33,8 +33,9 @@ void InventoryUI::Render()
 const std::string& InventoryUI::GetItemName(int i) {
 	static const std::unordered_map<int, std::string> itemNames = {
 		{ ITEM_PICKAXE, "°î±ªÀÌ" },
-		{ ITEM_SWORD,   "°Ë" },
-		{ ITEM_GRASS_BLOCK,   "ÀÜµð" }
+		{ ITEM_SWORD, "°Ë" },
+		{ ITEM_GRASS_BLOCK, "ÀÜµð" },
+		{ ITEM_GRASS_BLOCK, "Èë" }
 	};
 
 	auto it = itemNames.find(i);

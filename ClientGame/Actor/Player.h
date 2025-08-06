@@ -40,7 +40,7 @@ private:
 	const float frameDelay = 0.05f; //프레임 딜레이 시간
 	bool isRunning = false;
 	//능력
-	int attackDamage = 1;
+	int attackDamage = 50;
 
 	//아이템
 	std::string itemImageLink = "../Assets/Images/Item.txt";

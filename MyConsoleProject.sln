@@ -18,10 +18,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "솔루션 항목", "솔루�
 		Assets\Images\GrassBlock.txt = Assets\Images\GrassBlock.txt
 		Assets\Colors\GrassBlockBgColors.txt = Assets\Colors\GrassBlockBgColors.txt
 		Assets\Colors\GrassBlockFgColors.txt = Assets\Colors\GrassBlockFgColors.txt
-		Assets\Images\Item.txt = Assets\Images\Item.txt
-		Assets\Colors\InventoryUIFgColors.txt = Assets\Colors\InventoryUIFgColors.txt
-		Assets\Colors\InventoryUIBgColors.txt = Assets\Colors\InventoryUIBgColors.txt
+		Assets\Images\GroundBlock.txt = Assets\Images\GroundBlock.txt
+		Assets\Colors\GroundBlockBgColors.txt = Assets\Colors\GroundBlockBgColors.txt
+		Assets\Colors\GroundBlockFgColors.txt = Assets\Colors\GroundBlockFgColors.txt
 		Assets\Images\InventoryUI.txt = Assets\Images\InventoryUI.txt
+		Assets\Colors\InventoryUIBgColors.txt = Assets\Colors\InventoryUIBgColors.txt
+		Assets\Colors\InventoryUIFgColors.txt = Assets\Colors\InventoryUIFgColors.txt
+		Assets\Images\Item.txt = Assets\Images\Item.txt
 		Assets\Colors\ItemColors.txt = Assets\Colors\ItemColors.txt
 		Assets\Colors\PlayerFgColors.txt = Assets\Colors\PlayerFgColors.txt
 	EndProjectSection

@@ -173,6 +173,7 @@
   <ItemGroup>
     <ClCompile Include="Actor\Ghost.cpp" />
     <ClCompile Include="Actor\GrassBlock.cpp" />
+    <ClCompile Include="Actor\GroundBlock.cpp" />
     <ClCompile Include="Actor\Player.cpp" />
     <ClCompile Include="Game\Game.cpp" />
     <ClCompile Include="Level\GameLevel.cpp" />
@@ -187,6 +188,7 @@
     <ClInclude Include="Actor\GrassBlock.h" />
     <ClInclude Include="Actor\Player.h" />
     <ClInclude Include="Game\Game.h" />
+    <ClInclude Include="Actor\GroundBlock.h" />
     <ClInclude Include="Level\GameLevel.h" />
     <ClInclude Include="Level\HomeLevel.h" />
     <ClInclude Include="Level\PauseLevel.h" />

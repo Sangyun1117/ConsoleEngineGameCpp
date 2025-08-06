@@ -18,6 +18,7 @@
 #define ITEM_PICKAXE 1
 #define ITEM_SWORD 2
 #define ITEM_GRASS_BLOCK 3
+#define ITEM_GROUND_BLOCK 4
 
 //UI
 #define InventoryX 30
