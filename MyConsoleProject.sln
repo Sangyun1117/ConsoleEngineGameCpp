@@ -25,7 +25,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "솔루션 항목", "솔루�
 		Assets\Colors\InventoryUIBgColors.txt = Assets\Colors\InventoryUIBgColors.txt
 		Assets\Colors\InventoryUIFgColors.txt = Assets\Colors\InventoryUIFgColors.txt
 		Assets\Images\Item.txt = Assets\Images\Item.txt
-		Assets\Colors\ItemColors.txt = Assets\Colors\ItemColors.txt
+		Assets\Colors\ItemBgColors.txt = Assets\Colors\ItemBgColors.txt
+		Assets\Images\MainTitle.txt = Assets\Images\MainTitle.txt
+		Assets\Colors\ItemFgColors.txt = Assets\Colors\ItemFgColors.txt
+		Assets\Colors\MainTitleColors.txt = Assets\Colors\MainTitleColors.txt
 		Assets\Colors\PlayerFgColors.txt = Assets\Colors\PlayerFgColors.txt
 	EndProjectSection
 EndProject

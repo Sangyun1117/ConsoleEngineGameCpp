@@ -79,5 +79,5 @@ void ScreenBuffer::Render(CHAR_INFO* charInfo)
 	SMALL_RECT writeRegion{ 0, 0, (short)screenSize.x - 1, (short)screenSize.y - 1 };
 
 	// 전달된 문자 정보를 버퍼에 기록.
-	WriteConsoleOutputA(buffer, charInfo, screenSize, bufferPosition, &writeRegion);
+	WriteConsoleOutputW(buffer, charInfo, screenSize, bufferPosition, &writeRegion);
 }

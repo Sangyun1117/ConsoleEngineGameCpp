@@ -13,7 +13,7 @@ private:
 	void OnAttacked(int damage);
 private:
 	//능력
-	float moveSpeed = 0.5f; //이동속도
+	float moveSpeed = 0.2f; //이동속도
 	float xTemp = 0.0f;
 	float yTemp = 0.0f;
 

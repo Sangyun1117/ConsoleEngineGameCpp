@@ -131,19 +131,19 @@ void GameLevel::SettingBackground()
 		for (int x = 0; x < screenWidth; ++x)
 		{
 			CHAR_INFO& buffer = Engine::Get().imageBuffer[(y * (screenWidth)) + x];
-			buffer.Char.AsciiChar = ' ';
+			buffer.Char.UnicodeChar = ' ';
 			buffer.Attributes = nowColor;
 		}
 
 		// 각 줄 끝에 개행 문자 추가.
 		CHAR_INFO& buffer = Engine::Get().imageBuffer[(y * (screenWidth)) + screenWidth];
-		buffer.Char.AsciiChar = '\n';
+		buffer.Char.UnicodeChar = '\n';
 		buffer.Attributes = nowColor;
 	}
 
 	// 마지막에 널 문자 추가.
 	CHAR_INFO& buffer = Engine::Get().imageBuffer[(screenWidth) * screenHeight];
-	buffer.Char.AsciiChar = '\0';
+	buffer.Char.UnicodeChar = '\0';
 	buffer.Attributes = nowColor;
 }
 

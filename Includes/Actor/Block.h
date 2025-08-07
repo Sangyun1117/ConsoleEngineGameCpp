@@ -28,7 +28,8 @@ public:
 	void SetPosition(const Vector2& newPosition);
 	void SetPosition(int x, int y);
 	Vector2 GetPosition() const;
-
+	void SetItemNum(int n) { itemNum = n; }
+	int GetItemNum() { return itemNum; }
 protected:
 	// 개체의 위치.
 	Vector2 position;
@@ -37,4 +38,6 @@ protected:
 	const std::vector<std::vector<Color>>& fgs;
 	const std::vector<std::vector<Color>>& bgs;
 	std::string imageLink;
+
+	int itemNum;
 };

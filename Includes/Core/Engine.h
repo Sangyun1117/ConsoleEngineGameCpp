@@ -41,6 +41,7 @@ public:
 		const std::vector<std::vector<char>>& image,
 		const std::vector<std::vector<Color>>& fgColors,
 		const std::vector<std::vector<Color>>& bgColors);
+	void WriteToWcharBuffer(const Vector2& position, const wchar_t* image, Color fgColor = Color::White, Color bgColor = Color::Black);
 	// 레벨 추가 함수.
 	void AddLevel(Level* newLevel);
 

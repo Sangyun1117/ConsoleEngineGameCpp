@@ -174,7 +174,9 @@ void Engine::WriteToBuffer(const Vector2& position, const char* image, Color fgC
 
 		int index = (y * settings.width) + x;
 
-		imageBuffer[index].Char.AsciiChar = image[ix];
+		wchar_t wch = static_cast<wchar_t>(image[ix]); // 단순 변환
+		imageBuffer[index].Char.UnicodeChar = wch;
+		//imageBuffer[index].Char.AsciiChar = image[ix];
 		imageBuffer[index].Attributes = (WORD)fgColor | ((WORD)bgColor << 4);
 	}
 }
@@ -207,10 +209,32 @@ void Engine::WriteToBuffer(
 
 			int index = drawY * settings.width + drawX;
 
-			imageBuffer[index].Char.AsciiChar = image[y][x];
+			//imageBuffer[index].Char.AsciiChar = image[y][x];
+			wchar_t wch = static_cast<wchar_t>(image[y][x]); // 단순 변환
+			imageBuffer[index].Char.UnicodeChar = wch;
 			WORD attr = static_cast<WORD>(fgColors[y][x]) | (static_cast<WORD>(bgColors[y][x]) << 4);
 			imageBuffer[index].Attributes = attr;
 		}
+	}
+}
+
+void Engine::WriteToWcharBuffer(const Vector2& position, const wchar_t* image, Color fgColor, Color bgColor)
+{
+	int length = static_cast<int>(wcslen(image));
+
+	for (int ix = 0; ix < length; ++ix)
+	{
+		int x = position.x + ix;
+		int y = position.y;
+
+		// 콘솔 화면 범위 밖이면 건너뜀
+		if (x < 0 || x >= settings.width || y < 0 || y >= settings.height)
+			continue;
+
+		int index = (y * settings.width) + x;
+
+		imageBuffer[index].Char.UnicodeChar = image[ix];
+		imageBuffer[index].Attributes = (WORD)fgColor | ((WORD)bgColor << 4);
 	}
 }
 

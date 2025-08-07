@@ -1,17 +1,18 @@
-#include "HomeLevel.h"
+ï»¿#include "HomeLevel.h"
 #include "Utils/Utils.h"
 #include "Game/Game.h"
+#include "Core/ImageManager.h"
 #include <iostream>
 #include "Input.h"
 HomeLevel::HomeLevel()
 {
-	//¸Ş´º ¾ÆÀÌÅÛ Ãß°¡
+	//ë©”ë‰´ ì•„ì´í…œ ì¶”ê°€
 
 	items.emplace_back(new MenuItem("Resume Game", []() { static_cast<Game&>(Engine::Get()).ToggleMenu(); }));
 
 	items.emplace_back(new MenuItem("Quit Game", []() { Game::Get().Quit(); }));
 
-	//¾ÆÀÌÅÛ ¼ö ¹Ì¸® ÀúÀå
+	//ì•„ì´í…œ ìˆ˜ ë¯¸ë¦¬ ì €ì¥
 	length = static_cast<int>(items.size());
 }
 
@@ -25,46 +26,54 @@ HomeLevel::~HomeLevel()
 
 void HomeLevel::Render()
 {
-	//¸Ş´º Á¦¸ñ Ãâ·Â
+	//ë©”ë‰´ ì œëª© ì¶œë ¥
 	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+	//ë°°ê²½
+	SettingBackground();
+	//Main Title
+	const std::vector<std::vector<char>>& asciiImages = ImageManager::Get().GetImage("../Assets/Images/MainTitle.txt");
+	const std::vector<std::vector<Color>>& fgs = ImageManager::Get().GetColor("../Assets/Colors/MainTitleColors.txt");
+	const std::vector<std::vector<Color>>& bgs = ImageManager::Get().GetColor("../Assets/Colors/MainTitleColors.txt");
 
-	const char* topLine = "¦£¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¤";
-	const char* underLine = "¦¦¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¥";
-	const char* startLine = "¦¢                                    GAME START                                    ¦¢";
-	const char* exitLine = "¦¢                                       EXIT                                       ¦¢";
+	Engine::Get().WriteToBuffer(Vector2(10, 5), asciiImages, fgs, bgs);
 
-	// Áß¾Ó°ª ÁÂÇ¥ ±¸ÇÏ±â
-	int textLength = static_cast<int>(strlen(topLine));
+	//const wchar_t* topLine =   L"                              ";
+	//const wchar_t* underLine = L"                              ";
+	const wchar_t* startLine = isHoverGameStart ? L"     â¡ï¸  GAME START         "  : L"         GAME START         ";
+	const wchar_t* exitLine = isHoverExit ?       L"       â¡ï¸   EXIT            " :  L"            EXIT            ";
+
+	// ì¤‘ì•™ê°’ ì¢Œí‘œ êµ¬í•˜ê¸°
+	int textLength = static_cast<int>(wcslen(startLine));
 	int startX = (Engine::Get().GetScreenWidth() - textLength) / 2;
-	int startY = (Engine::Get().GetScreenHeight() / 2) - 3 ;
+	int startY = Engine::Get().GetScreenHeight() - 12;
 	
-	//¹öÆ° ÁÂÇ¥ ÀúÀå
+	//ë²„íŠ¼ ì¢Œí‘œ ì €ì¥
 	gameStartButtonLeftTopXY.x = startX;
 	gameStartButtonLeftTopXY.y = startY;
-	gameStartButtonRightBottomXY.x = startX + strlen(topLine);
+	gameStartButtonRightBottomXY.x = startX + wcslen(startLine);
 	gameStartButtonRightBottomXY.y = startY + 2;
 
-	// ¸Ş´º ¾ÆÀÌÅÛ ·»´õ¸µ.
-	Color buttonTextColor = isHoverGameStart ? Color::Red : Color::BrightBlue;
-	Color buttonBackgroundColor = isHoverGameStart ? Color::Yellow : Color::Green;
-	Engine::Get().WriteToBuffer({ startX, startY }, topLine, buttonTextColor, buttonBackgroundColor);
-	Engine::Get().WriteToBuffer({ startX, startY+1 }, startLine, buttonTextColor, buttonBackgroundColor);
-	Engine::Get().WriteToBuffer({ startX, startY+2 }, underLine, buttonTextColor, buttonBackgroundColor);
+	// ë©”ë‰´ ì•„ì´í…œ ë Œë”ë§.
+	Color buttonTextColor = isHoverGameStart ? Color::Red : Color::Black;
+	Color buttonBackgroundColor = Color::BrightYellow;
+	//Engine::Get().WriteToWcharBuffer({ startX, startY }, topLine, buttonTextColor, buttonBackgroundColor);
+	Engine::Get().WriteToWcharBuffer({ startX, startY+1 }, startLine, buttonTextColor, buttonBackgroundColor);
+	//Engine::Get().WriteToWcharBuffer({ startX, startY+2 }, underLine, buttonTextColor, buttonBackgroundColor);
 
-	startY += 5;//y°ª ¿Ã·Á¼­ ¹öÆ° °£ÀÇ °£°İ Á¶Àı
+	startY += 3;//yê°’ ì˜¬ë ¤ì„œ ë²„íŠ¼ ê°„ì˜ ê°„ê²© ì¡°ì ˆ
 	
-	//¹öÆ° ÁÂÇ¥ ÀúÀå
+	//ë²„íŠ¼ ì¢Œí‘œ ì €ì¥
 	exitButtonLeftTopXY.x = startX;
 	exitButtonLeftTopXY.y = startY;
-	exitButtonRightBottomXY.x = startX + strlen(topLine);
+	exitButtonRightBottomXY.x = startX + wcslen(exitLine);
 	exitButtonRightBottomXY.y = startY + 2;
 
-	// ¸Ş´º ¾ÆÀÌÅÛ ·»´õ¸µ.
-	buttonTextColor = isHoverExit ? Color::Red : Color::BrightBlue;
-	buttonBackgroundColor = isHoverExit ? Color::Yellow : Color::Green;
-	Engine::Get().WriteToBuffer({ startX, startY }, topLine, buttonTextColor, buttonBackgroundColor);
-	Engine::Get().WriteToBuffer({ startX, startY+1 }, exitLine, buttonTextColor, buttonBackgroundColor);
-	Engine::Get().WriteToBuffer({ startX, startY+2 }, underLine, buttonTextColor, buttonBackgroundColor);
+	// ë©”ë‰´ ì•„ì´í…œ ë Œë”ë§.
+	buttonTextColor = isHoverExit ? Color::Yellow : Color::Black;
+	buttonBackgroundColor = Color::BrightYellow;
+	//Engine::Get().WriteToWcharBuffer({ startX, startY }, topLine, buttonTextColor, buttonBackgroundColor);
+	Engine::Get().WriteToWcharBuffer({ startX, startY+1 }, exitLine, buttonTextColor, buttonBackgroundColor);
+	//Engine::Get().WriteToWcharBuffer({ startX, startY+2 }, underLine, buttonTextColor, buttonBackgroundColor);
 
 }
 
@@ -76,10 +85,10 @@ void HomeLevel::Tick(float deltaTime)
 		items[1]->onSelected();
 	}
 
-	//¸¶¿ì½º°¡ ¹öÆ° À§¿¡ ÀÖ´ÂÁö È®ÀÎ
+	//ë§ˆìš°ìŠ¤ê°€ ë²„íŠ¼ ìœ„ì— ìˆëŠ”ì§€ í™•ì¸
 	isHoverGameStart = Input::Get().IsMouseOver(gameStartButtonLeftTopXY, gameStartButtonRightBottomXY);
 	isHoverExit = Input::Get().IsMouseOver(exitButtonLeftTopXY, exitButtonRightBottomXY);
-	//¸¶¿ì½º ÀÔ·Â Ã³¸®
+	//ë§ˆìš°ìŠ¤ ì…ë ¥ ì²˜ë¦¬
 	if (Input::Get().GetMouseLeftDown() &&
 		Input::Get().IsMouseOver(gameStartButtonLeftTopXY, gameStartButtonRightBottomXY))
 	{
@@ -91,4 +100,31 @@ void HomeLevel::Tick(float deltaTime)
 	{
 		items[1]->onSelected();
 	}
+}
+
+void HomeLevel::SettingBackground() {
+	WORD backgoroundColor = BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_INTENSITY; // í•˜ëŠ˜ìƒ‰ ë°°ê²½
+
+	int screenWidth = Engine::Get().GetScreenWidth();
+	int screenHeight = Engine::Get().GetScreenHeight();
+	int groundLine = 55;
+	for (int y = 0; y < Engine::Get().GetScreenHeight(); ++y)
+	{
+		for (int x = 0; x < screenWidth; ++x)
+		{
+			CHAR_INFO& buffer = Engine::Get().imageBuffer[(y * (screenWidth)) + x];
+			buffer.Char.UnicodeChar = ' ';
+			buffer.Attributes = backgoroundColor;
+		}
+
+		// ê° ì¤„ ëì— ê°œí–‰ ë¬¸ì ì¶”ê°€.
+		CHAR_INFO& buffer = Engine::Get().imageBuffer[(y * (screenWidth)) + screenWidth];
+		buffer.Char.UnicodeChar = '\n';
+		buffer.Attributes = backgoroundColor;
+	}
+
+	// ë§ˆì§€ë§‰ì— ë„ ë¬¸ì ì¶”ê°€.
+	CHAR_INFO& buffer = Engine::Get().imageBuffer[(screenWidth)*screenHeight];
+	buffer.Char.UnicodeChar = '\0';
+	buffer.Attributes = backgoroundColor;
 }

@@ -10,6 +10,7 @@
 
 Block::Block(const std::string& imageLink, const Vector2& position, const std::vector<std::vector<char>>& images, const std::vector<std::vector<Color>>& bgs, const std::vector<std::vector<Color>>& fgs)
 	: imageLink(imageLink), position(position), asciiImages(images), bgs(bgs), fgs(fgs) {
+	SetItemNum(0);
 }
 
 Block::~Block()

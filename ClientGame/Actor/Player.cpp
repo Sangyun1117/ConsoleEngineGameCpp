@@ -1,5 +1,6 @@
 #include "Player.h"
 #include "GrassBlock.h"
+#include "GroundBlock.h"
 #include "Engine.h"
 #include "Utils/Utils.h"
 #include "Settings/ActionDefines.h"
@@ -97,7 +98,7 @@ void Player::Tick(float deltaTime)
 
 	for (int i = 0; i <= 9; i++) { //인벤토리 아이템 선택
 		if (Input::Get().GetKey('0' + i)) {
-			itemLevel = inventory[i];
+			itemLevel = i;
 			break;  // 여러 개 눌렸을 경우 첫 번째 것만 적용
 		}
 	}
@@ -106,10 +107,6 @@ void Player::Tick(float deltaTime)
 	//{
 	//	Game::Get().Quit();
 	//}
-	if (Input::Get().GetKeyDown(VK_CONTROL))
-	{
-		gravity = 0.0f;
-	}
 	//마우스 입력
 	if (Input::Get().GetMouseLeftDown())
 	{
@@ -119,7 +116,7 @@ void Player::Tick(float deltaTime)
 		//	actionDuration = 0.2f; //지속시간 설정
 		//}
 		GameLevel* mygl = dynamic_cast<GameLevel*>(GetOwner());
-		if (itemLevel == ITEM_PICKAXE) {
+		if ( inventory[itemLevel].itemName == ITEM_PICKAXE) {
 			isItemAction = true;
 			actionLevel = ACTION_ATTACK;
 			actionTimer = 0.0f; //타이머 초기화
@@ -154,11 +151,33 @@ void Player::Tick(float deltaTime)
 			{
 				if (mygl->mapData[searchBlockY][searchBlockX] != nullptr) {
 					//mygl->mapData[searchBlockY][searchBlockX]->Destroy();
+					for (int i = 1; i < inventory.size()+1; ++i) { //1,2,3~0순서로 하기 위해
+						int num = i % 10;
+						if (inventory[num].itemName == ITEM_HAND) {
+							switch (mygl->mapData[searchBlockY][searchBlockX]->GetItemNum())
+							{
+							case ITEM_GRASS_BLOCK:
+								inventory[num] = { ITEM_GRASS_BLOCK, 1 };
+								break;
+							case ITEM_GROUND_BLOCK:
+								inventory[num] = { ITEM_GROUND_BLOCK, 1 };
+								break;
+							default:
+								break;
+							}
+
+							break;
+						}
+						if (inventory[num].itemName == mygl->mapData[searchBlockY][searchBlockX]->GetItemNum() && inventory[num].count < 64) {
+							inventory[num].count++;
+							break;
+						}
+					}
 					SafeDelete(mygl->mapData[searchBlockY][searchBlockX]);
 				}
 			}
 		}
-		else if (itemLevel == ITEM_GRASS_BLOCK) {
+		else if (inventory[itemLevel].itemName == ITEM_GRASS_BLOCK || inventory[itemLevel].itemName == ITEM_GROUND_BLOCK) {
 			isItemAction = true;
 			actionLevel = ACTION_ATTACK;
 			actionTimer = 0.0f; //타이머 초기화
@@ -200,12 +219,27 @@ void Player::Tick(float deltaTime)
 			// 4. 설치
 
 			if (mygl && mygl->mapData[searchBlockY][searchBlockX] == nullptr) {
-				GrassBlock* block = new GrassBlock(searchBlockX * BLOCKSIZE_WIDTH, searchBlockY * BLOCKSIZE_HEIGHT);
-				//mygl->AddActor(block);
-				mygl->mapData[searchBlockY][searchBlockX] = block;
+				Block* block = nullptr;
+				switch (inventory[itemLevel].itemName) {
+				case ITEM_GRASS_BLOCK:
+					block = new GrassBlock(searchBlockX * BLOCKSIZE_WIDTH, searchBlockY * BLOCKSIZE_HEIGHT);
+					break;
+				case ITEM_GROUND_BLOCK:
+					block = new GroundBlock(searchBlockX * BLOCKSIZE_WIDTH, searchBlockY * BLOCKSIZE_HEIGHT);
+					break;
+				default:
+					break;
+				}
+				//GrassBlock* block = new GrassBlock(searchBlockX * BLOCKSIZE_WIDTH, searchBlockY * BLOCKSIZE_HEIGHT);
+				mygl->mapData[searchBlockY][searchBlockX] = block; 
+				inventory[itemLevel].count--;
+				if (inventory[itemLevel].count <= 0) {
+					inventory[itemLevel] = { ITEM_HAND, 0 };
+					itemLevel = ITEM_HAND;
+				}
 			}
 		}
-		else if (itemLevel == ITEM_SWORD) {
+		else if (inventory[itemLevel].itemName == ITEM_SWORD) {
 			isItemAction = true;
 			actionLevel = ACTION_ATTACK;
 			actionTimer = 0.0f; //타이머 초기화
@@ -266,8 +300,8 @@ void Player::Render()
 	int itemPosX = isRight ? 3 : -3;
 	int itemPosY = isItemAction ? 6 : 3;
 	int itemActionPoint = isItemAction ? 10 : 0;
-	if (itemLevel != ITEM_HAND) {
-		startRow = itemDirection + (itemLevel - 1) * 20 + itemActionPoint;
+	if (inventory[itemLevel].itemName != ITEM_HAND) {
+		startRow = itemDirection + (inventory[itemLevel].itemName - 1) * 20 + itemActionPoint;
 		int drawHeight = 5; //아이템 높이
 
 		auto sliceImage = Utils::Slice2DVector(itemsImage, startRow, 0, drawHeight, (int)itemsImage[0].size());
@@ -277,13 +311,6 @@ void Player::Render()
 		Vector2 itemDrawPos = { actorPos.x + itemPosX, actorPos.y + itemPosY };
 		Engine::Get().WriteToBuffer(itemDrawPos, sliceImage, sliceFg, sliceBg);
 	}
-
-	//인벤토리 렌더
-	//for (int i = 0; i < inventory.size(); ++i ) {
-	//}
-
-	//Vector2 inventoryDrawPos = { InventoryX + 3,InventoryY+2 };
-	//Engine::Get().WriteToBuffer(inventoryDrawPos,"곡괭이", Color::Black, Color::White);
 }
 
 void Player::Move(Vector2 delta)
@@ -330,11 +357,10 @@ void Player::OnAttacked(int damage)
 
 void Player::InventoryReset() {
 	for (int i = 0; i <= 9; ++i) {
-		inventory.push_back(ITEM_HAND);
+		inventory.push_back({ ITEM_HAND, 0 });
 	}
-	inventory[1] = ITEM_PICKAXE;
-	inventory[2] = ITEM_GRASS_BLOCK;
-	inventory[3] = ITEM_SWORD;
+	inventory[1] = { ITEM_PICKAXE, 1 };
+	inventory[2] = { ITEM_SWORD, 1 };
 }
 
 void Player::LoadItemsImage()

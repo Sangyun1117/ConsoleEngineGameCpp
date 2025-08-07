@@ -46,7 +46,7 @@ private:
 	Color unselectedBagroundColor = Color::Gray;
 	//아아템 배열
 	std::vector<MenuItem*> items;
-
+	void SettingBackground();
 	//메뉴 아이템 수
 	int length = 0;
 

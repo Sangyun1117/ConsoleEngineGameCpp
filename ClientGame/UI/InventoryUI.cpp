@@ -1,4 +1,4 @@
-#include "InventoryUI.h"
+Ôªø#include "InventoryUI.h"
 #include "UI/UIElement.h"
 #include "Core/ImageManager.h"
 #include "Level/GameLevel.h"
@@ -17,32 +17,58 @@ void InventoryUI::Render()
 		return;
 	Engine::Get().WriteToBuffer(position, asciiImages, fgs, bgs);
 
-	const std::vector<int>& inv = static_cast<GameLevel*>(owner)->player->GetInventory();
+	const std::vector<Item>& inv = static_cast<GameLevel*>(owner)->player->GetInventory();
 
 	Vector2 itemPos = { position.x + 2, position.y + 2 };
-	for (int i : inv) {
-		if (i != ITEM_HAND) {
-			const std::string itemName = GetItemName(i);
+	Vector2 itemCountPos = { position.x + 6, position.y + 3 };
+	for (int i = 1; i < inv.size()+1; i++) {
+		int num = i % 10;
+		if (inv[num].itemName != ITEM_HAND) {
+			const std::wstring itemName = GetItemName(inv[num]);
+			Color itemColor;
+			switch (inv[num].itemName)
+			{
+			case ITEM_PICKAXE:
+				itemColor = Color::Blue;
+				break;
+			case ITEM_SWORD:
+				itemColor = Color::Red;
+				break;
+			case ITEM_GRASS_BLOCK:
+				itemColor = Color::BrightGreen;
+				break;
+			case ITEM_GROUND_BLOCK:
+				itemColor = Color::Yellow;
+				break;
+			default:
+				itemColor = Color::Black;
+				break;
+			}
 
-			Engine::Get().WriteToBuffer(itemPos, itemName.c_str(), Color::Black, Color::White);
-			itemPos.x += 8;
+			Engine::Get().WriteToWcharBuffer(itemPos, itemName.c_str(), itemColor, Color::White);
 		}
+		if (inv[num].count > 0) {
+			std::wstring str = std::to_wstring(inv[num].count);
+			Engine::Get().WriteToWcharBuffer(itemCountPos, str.c_str(), Color::Black, Color::White);
+		}
+		itemPos.x += 8;
+		itemCountPos.x += 8;
 	}
 }
 
-const std::string& InventoryUI::GetItemName(int i) {
-	static const std::unordered_map<int, std::string> itemNames = {
-		{ ITEM_PICKAXE, "∞Ó±™¿Ã" },
-		{ ITEM_SWORD, "∞À" },
-		{ ITEM_GRASS_BLOCK, "¿‹µ" },
-		{ ITEM_GRASS_BLOCK, "»Î" }
+const std::wstring& InventoryUI::GetItemName(Item item) {
+	static const std::unordered_map<int, std::wstring> itemNames = {
+		{ ITEM_PICKAXE, L"  ‚õèÔ∏è" },
+		{ ITEM_SWORD, L"  ‚öîÔ∏è" },
+		{ ITEM_GRASS_BLOCK, L"  ‚ôí " },
+		{ ITEM_GROUND_BLOCK, L"  üü´" }
 	};
 
-	auto it = itemNames.find(i);
+	auto it = itemNames.find(item.itemName);
 	if (it != itemNames.end())
 		return it->second;
 
-	static const std::string unknown = "æÀ ºˆ æ¯¿Ω";
+	static const std::wstring unknown = L"Ïïå Ïàò ÏóÜÏùå";
 	return unknown;
 }
 
