@@ -11,8 +11,11 @@ Window콘솔창으로 전투, 탐험, 건축 등을 즐길 수 있습니다.
 ---
 
 ## 🖼️ 데모 / 스크린샷
-블록 설치
+건축
 ![Image](https://github.com/user-attachments/assets/bba67935-1797-445e-9dac-11c442a59111)
+![Image](https://github.com/user-attachments/assets/481b02e6-2021-482f-9bad-e2d71686b9a6)
+전투
+![Image](https://github.com/user-attachments/assets/d2ce1554-e098-4c45-9e3d-970feab75a50)
 
 ---
 
