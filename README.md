@@ -43,7 +43,7 @@ https://github.com/Sangyun1117/Terraria-ConsoleEngine/releases/download/v1.0.0/C
 ## 😒 개발 과정 & 어려웠던 점
 ### 1. 플레이어 중심 화면 이동
   ❓맵이 넓기 때문에 플레이어 중심으로 맵의 일부분만 보여줘야 했습니다. <br>
-  💡해결 방법 <br>
+  - 💡해결 방법 <br>
     1. 맵과 플레이어의 좌표를 txt파일에 저장 <br>
     2. txt 파일을 불러 온 후 월드 좌표로 변경 (txt파일에 적혀있는 문자를 Switch 문으로 실제 오브젝트 크기로 변경 시킴) <br>
     3. 카메라 LeftTop 좌표 구하기 (플레이어 좌표 - 콘솔창크기/2) <br>
