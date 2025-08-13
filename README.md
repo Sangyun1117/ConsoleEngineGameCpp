@@ -88,6 +88,9 @@ https://github.com/Sangyun1117/Terraria-ConsoleEngine/releases/download/v1.0.0/C
 
 - 더 다양한 아이템과 몬스터 추가
 
+## 📄 프로젝트 문서 (Notion)
+[🔗 노션 페이지](https://www.notion.so/C-2423bd2b36e2808c8fafceb6bb81a479)
+
 - 몬스터 이동 알고리즘 변경 (A* 알고리즘 등)
 
 - 미니맵
