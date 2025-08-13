@@ -3,18 +3,16 @@
 #include "Math/Color.h"
 #include "Math/Vector2.h"
 #include <vector>
-
-struct HomeMenuItem
-{
+struct MenuMenuItem {
 	//함수 포인터 선언
 	typedef void (*OnSelected)();
 
-	HomeMenuItem(const char* text, OnSelected onSelected) : onSelected(onSelected) {
+	MenuMenuItem(const char* text, OnSelected onSelected) : onSelected(onSelected) {
 		size_t length = strlen(text) + 1;
 		menuText = new char[length];
 		strcpy_s(menuText, length, text);
 	}
-	~HomeMenuItem() {
+	~MenuMenuItem() {
 		SafeDeleteArray(menuText);
 	}
 
@@ -25,12 +23,11 @@ struct HomeMenuItem
 	OnSelected onSelected = nullptr;
 };
 
-
-class HomeLevel : public Level {
-	RTTI_DECLARATIONS(HomeLevel, Level)
+class MenuLevel : public Level {
+	RTTI_DECLARATIONS(MenuLevel, Level)
 public:
-	HomeLevel();
-	~HomeLevel();
+	MenuLevel();
+	~MenuLevel();
 
 	virtual void Tick(float deltaTime) override;
 	virtual void Render() override;
@@ -45,7 +42,7 @@ private:
 	Color unselectedTextColor = Color::White;
 	Color unselectedBagroundColor = Color::Gray;
 	//아아템 배열
-	std::vector<HomeMenuItem*> items;
+	std::vector<MenuMenuItem*> items;
 	void SettingBackground();
 	//메뉴 아이템 수
 	int length = 0;
@@ -55,4 +52,3 @@ private:
 	Vector2 exitButtonLeftTopXY;
 	Vector2 exitButtonRightBottomXY;
 };
-

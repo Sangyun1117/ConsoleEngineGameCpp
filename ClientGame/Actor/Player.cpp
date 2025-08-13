@@ -35,7 +35,7 @@ void Player::Tick(float deltaTime)
 {
 	//super::Tick(deltaTime);
 	if (hp <= 0) {
-		static_cast<Game&>(Engine::Get()).QuitLevel();
+		static_cast<Game&>(Engine::Get()).QuitLevel(LEVEL_NUM_GAME, LEVEL_NUM_HOME);
 		return;
 	}
 	// 중력 처리

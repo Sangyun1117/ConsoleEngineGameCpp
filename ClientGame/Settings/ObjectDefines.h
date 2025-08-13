@@ -1,5 +1,9 @@
 #pragma once
 
+#define LEVEL_NUM_HOME 0
+#define LEVEL_NUM_GAME 1
+#define LEVEL_NUM_MENU 2
+
 //ªÁ¿Ã¡Ó
 #define MAP_WIDTH 128
 #define MAP_HEIGHT 32 

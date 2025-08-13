@@ -42,7 +42,7 @@ void GameLevel::Tick(float deltaTime)
 	super::Tick(deltaTime);
 	if (Input::Get().GetKeyDown(VK_ESCAPE))
 	{
-		static_cast<Game&>(Engine::Get()).ToggleMenu();
+		static_cast<Game&>(Engine::Get()).ChangeLevel(LEVEL_NUM_MENU);
 		//static_cast<Game&>(Engine::Get()).QuitLevel();
 	}
 }
@@ -51,10 +51,10 @@ void GameLevel::Render()
 {
 	//super::Render();
 	SettingBackground();
-	
+
 	for (auto blockRow : mapData) {
 		for (Block* block : blockRow) {
-			if(block!=nullptr)
+			if (block != nullptr)
 				block->Render();
 		}
 	}
@@ -117,7 +117,7 @@ void GameLevel::Render()
 void GameLevel::SettingBackground()
 {
 	WORD skyColor =
-	BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_INTENSITY; // 하늘색 배경
+		BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_INTENSITY; // 하늘색 배경
 	WORD groundColor = 0; // 검정 배경
 
 	WORD nowColor = skyColor;
@@ -142,7 +142,7 @@ void GameLevel::SettingBackground()
 	}
 
 	// 마지막에 널 문자 추가.
-	CHAR_INFO& buffer = Engine::Get().imageBuffer[(screenWidth) * screenHeight];
+	CHAR_INFO& buffer = Engine::Get().imageBuffer[(screenWidth)*screenHeight];
 	buffer.Char.UnicodeChar = '\0';
 	buffer.Attributes = nowColor;
 }

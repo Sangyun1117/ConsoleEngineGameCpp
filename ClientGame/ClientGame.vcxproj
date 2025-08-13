@@ -182,6 +182,7 @@ xcopy "C:\Workspace\CppBasic\MyConsoleProject\Assets" "C:\Workspace\CppBasic\MyC
     <ClCompile Include="Game\Game.cpp" />
     <ClCompile Include="Level\GameLevel.cpp" />
     <ClCompile Include="Level\HomeLevel.cpp" />
+    <ClCompile Include="Level\MenuLevel.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Settings\ObjectDefines.h" />
     <ClCompile Include="UI\InventoryUI.cpp" />
@@ -194,6 +195,7 @@ xcopy "C:\Workspace\CppBasic\MyConsoleProject\Assets" "C:\Workspace\CppBasic\MyC
     <ClInclude Include="Actor\GroundBlock.h" />
     <ClInclude Include="Level\GameLevel.h" />
     <ClInclude Include="Level\HomeLevel.h" />
+    <ClInclude Include="Level\MenuLevel.h" />
     <ClInclude Include="Settings\ActionDefines.h" />
     <ClInclude Include="UI\InventoryUI.h" />
   </ItemGroup>
