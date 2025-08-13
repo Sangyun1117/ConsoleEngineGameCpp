@@ -26,8 +26,8 @@ Window콘솔창으로 전투, 탐험, 건축 등을 즐길 수 있습니다.
 ---
 
 ## 🛠️ 설치 방법
-OS: Windows 콘솔/터미널 환경 필요
-https://github.com/Sangyun1117/Terraria-ConsoleEngine/releases/download/v1.0.0/ConsoleTerraria.zip
+OS: Windows 콘솔/터미널 환경 필요<br>
+https://github.com/Sangyun1117/Terraria-ConsoleEngine/releases/download/v1.0.0/ConsoleTerraria.zip <br>
 해당 링크에서 설치 후 ClientGame 폴더의 ClientGame.exe 관리자 권한으로 실행
 
 ## 📌 게임 방법
