@@ -49,4 +49,8 @@ https://github.com/Sangyun1117/Terraria-ConsoleEngine/releases/download/v1.0.0/C
 
 - 더 다양한 아이템과 몬스터 추가
 
+- 몬스터 이동 알고리즘 변경 (A* 알고리즘 등)
+
+- 미니맵
+
 - 맵 에디터 기능
