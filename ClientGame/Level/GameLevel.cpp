@@ -12,8 +12,9 @@
 #include <string>
 GameLevel::GameLevel()
 {
-	//ReadMapFile("BasicMap.txt");
+	//맵 읽기
 	ReadMapFile("chunk_0_0.txt");
+	//ui 추가
 	InventoryUI* hpUI = new InventoryUI(InventoryX, InventoryY);
 	AddUI(hpUI);
 }
@@ -27,8 +28,6 @@ GameLevel::~GameLevel()
 		row.clear();
 	}
 	mapData.clear();
-	//super::~Level();
-	//mapData.clear();
 	player = nullptr;
 }
 
@@ -40,16 +39,15 @@ void GameLevel::BeginPlay()
 void GameLevel::Tick(float deltaTime)
 {
 	super::Tick(deltaTime);
+	//esc 누르면 메뉴레벨로 이동
 	if (Input::Get().GetKeyDown(VK_ESCAPE))
 	{
 		static_cast<Game&>(Engine::Get()).ChangeLevel(LEVEL_NUM_MENU);
-		//static_cast<Game&>(Engine::Get()).QuitLevel();
 	}
 }
 
 void GameLevel::Render()
 {
-	//super::Render();
 	SettingBackground();
 
 	for (auto blockRow : mapData) {
@@ -182,7 +180,6 @@ void GameLevel::ReadMapFile(const char* filename)
 	// 문자열 길이 값.
 	int size = (int)readSize;
 	// x, y 좌표.
-	//Vector2 position;
 	Vector2 gridPos;
 	// 문자 배열 순회.
 	while (index < size)
@@ -194,7 +191,6 @@ void GameLevel::ReadMapFile(const char* filename)
 		if (mapCharacter == '\n')
 		{
 			// 다음 줄로 넘기면서, x 좌표 초기화.
-			//position.y++;
 			gridPos.y++;
 			gridPos.x = 0;
 			continue;
@@ -209,11 +205,7 @@ void GameLevel::ReadMapFile(const char* filename)
 			if (gridPos.y >= 0 && gridPos.y < (int)mapData.size() &&
 				gridPos.x >= 0 && gridPos.x < (int)mapData[0].size()) {
 				GrassBlock* block = new GrassBlock(gridPos.x * 10, gridPos.y * 5);
-				//AddActor(block);
 				mapData[gridPos.y][gridPos.x] = block;
-				//char buf[256];
-				//sprintf_s(buf, sizeof(buf), "디버그 로그: x: %d, y: %d\n", gridPos.x, gridPos.y);
-				//OutputDebugStringA(buf);
 			}
 			break;
 		}
@@ -249,6 +241,7 @@ void GameLevel::ReadMapFile(const char* filename)
 	// 파일 닫기.
 	fclose(file);
 
+	//카메라 좌표를 플레이어가 화면 중심인 화면의 왼쪽상단으로 위치
 	Engine::Get().cameraPos.x = player->GetPosition().x - Engine::Get().GetScreenWidth() / 2;
 	Engine::Get().cameraPos.y = player->GetPosition().y - Engine::Get().GetScreenHeight() / 2;
 }

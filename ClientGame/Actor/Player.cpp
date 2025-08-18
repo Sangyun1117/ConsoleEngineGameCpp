@@ -19,21 +19,19 @@
 Player::Player(int x, int y) : Actor(std::string("../Assets/Images/AmongUs.txt"), Vector2(x, y), ImageManager::Get().GetImage("../Assets/Images/AmongUs.txt"), ImageManager::Get().GetColor("../Assets/Colors/PlayerFgColors.txt"), ImageManager::Get().GetColor("../Assets/Colors/PlayerFgColors.txt"))
 {
 	SetSize(PLAYER_WIDTH, PLAYER_HEIGHT);
+	//아이템 이미지 가져오기
 	itemsImage = ImageManager::Get().GetImage(itemImageLink);
-	itemsFgColors = ImageManager::Get().GetColor(fgColorsImageLink);
-	itemsBgColors = ImageManager::Get().GetColor(bgColorsImageLink);
+	itemsFgColors = ImageManager::Get().GetColor(itemFgLink);
+	itemsBgColors = ImageManager::Get().GetColor(itemBgLink);
 	actionLevel = ACTION_IDLE;
-	//LoadColorsImage(bgColors, bgColorsImageLink);
-	//LoadItemsImage();
-	//SetPosition(Vector2(x, y));
+
 	SetSortingOrder(20);
-	InventoryReset(); //인벤토리 0~9 까지 핸드로 초기화
+	InventoryReset(); //인벤토리 초기화
 
 }
 
 void Player::Tick(float deltaTime)
 {
-	//super::Tick(deltaTime);
 	if (hp <= 0) {
 		static_cast<Game&>(Engine::Get()).QuitLevel(LEVEL_NUM_GAME, LEVEL_NUM_HOME);
 		return;
@@ -103,19 +101,12 @@ void Player::Tick(float deltaTime)
 		}
 	}
 
-	//if (Input::Get().GetKeyDown(VK_ESCAPE))
-	//{
-	//	Game::Get().Quit();
-	//}
 	//마우스 입력
 	if (Input::Get().GetMouseLeftDown())
 	{
-		//if (itemLevel == ITEM_HAND) {
-		//	actionLevel = ACTION_ATTACK;
-		//	actionTimer = 0.0f; //타이머 초기화
-		//	actionDuration = 0.2f; //지속시간 설정
-		//}
 		GameLevel* mygl = dynamic_cast<GameLevel*>(GetOwner());
+
+		//현재 아이템이 곡괭이라면 클릭지점에 블럭이 있을 경우 파괴하고 인벤토리에 추가
 		if ( inventory[itemLevel].itemName == ITEM_PICKAXE) {
 			isItemAction = true;
 			actionLevel = ACTION_ATTACK;
@@ -137,7 +128,7 @@ void Player::Tick(float deltaTime)
 			int buildRangeX = abs(searchBlockX - playerCenterX);
 			int buildRangeY = abs(searchBlockY - playerCenterY);
 			if (buildRangeX > BUILD_LIMIT || buildRangeY > BUILD_LIMIT) {
-				return; // 너무 멀어서 설치 금지
+				return; // 너무 멀어서 금지
 			}
 
 
@@ -150,8 +141,7 @@ void Player::Tick(float deltaTime)
 				searchBlockY >= minY && searchBlockY <= maxY)
 			{
 				if (mygl->mapData[searchBlockY][searchBlockX] != nullptr) {
-					//mygl->mapData[searchBlockY][searchBlockX]->Destroy();
-					for (int i = 1; i < inventory.size()+1; ++i) { //1,2,3~0순서로 하기 위해
+					for (int i = 1; i < inventory.size()+1; ++i) { //인벤토리 1,2,3~0순서로 하기 위해
 						int num = i % 10;
 						if (inventory[num].itemName == ITEM_HAND) {
 							switch (mygl->mapData[searchBlockY][searchBlockX]->GetItemNum())
@@ -177,6 +167,7 @@ void Player::Tick(float deltaTime)
 				}
 			}
 		}
+		//현재 아이템이 블럭이라면 설치가능한지 판단 후 블럭 설치
 		else if (inventory[itemLevel].itemName == ITEM_GRASS_BLOCK || inventory[itemLevel].itemName == ITEM_GROUND_BLOCK) {
 			isItemAction = true;
 			actionLevel = ACTION_ATTACK;
@@ -217,7 +208,6 @@ void Player::Tick(float deltaTime)
 				return;
 			}
 			// 4. 설치
-
 			if (mygl && mygl->mapData[searchBlockY][searchBlockX] == nullptr) {
 				Block* block = nullptr;
 				switch (inventory[itemLevel].itemName) {
@@ -230,7 +220,6 @@ void Player::Tick(float deltaTime)
 				default:
 					break;
 				}
-				//GrassBlock* block = new GrassBlock(searchBlockX * BLOCKSIZE_WIDTH, searchBlockY * BLOCKSIZE_HEIGHT);
 				mygl->mapData[searchBlockY][searchBlockX] = block; 
 				inventory[itemLevel].count--;
 				if (inventory[itemLevel].count <= 0) {
@@ -239,15 +228,17 @@ void Player::Tick(float deltaTime)
 				}
 			}
 		}
+		//현재 아이템이 검이면 공격범위에 몬스터가 있는지 확인 후 공격
 		else if (inventory[itemLevel].itemName == ITEM_SWORD) {
 			isItemAction = true;
 			actionLevel = ACTION_ATTACK;
 			actionTimer = 0.0f; //타이머 초기화
 			actionDuration = 0.2f; //지속시간 설정
 
-			for (Actor* other : mygl->GetActors()) {
+			for (Actor* other : mygl->GetActors()) { //자기자신 제외
 				if (other == this)
 					continue;
+				//범위 지정
 				Vector2 myTL = isRight ? Vector2(position.x + width - BLOCKSIZE_WIDTH / 2, position.y) : Vector2(position.x - BLOCKSIZE_WIDTH / 2, position.y);
 				Vector2 myBR = isRight ? Vector2(position.x + width + BLOCKSIZE_WIDTH / 2, position.y + height) : Vector2(position.x + BLOCKSIZE_WIDTH / 2, position.y + height);
 				Vector2 otherTL = other->GetPosition();
@@ -259,6 +250,7 @@ void Player::Tick(float deltaTime)
 		}
 	}
 
+	//현재 애니메이션 중이라면 시간체크
 	if (actionLevel != ACTION_IDLE) {
 		actionTimer += Engine::Get().GetDeltaTime();
 		if (actionTimer >= actionDuration) {
@@ -267,10 +259,6 @@ void Player::Tick(float deltaTime)
 			actionTimer = 0.0f;
 		}
 	}
-
-	char title[128];
-	sprintf_s(title, "item: %d, action: %d", itemLevel, actionLevel);
-	SetConsoleTitleA(title);
 }
 
 void Player::Render()
@@ -280,7 +268,7 @@ void Player::Render()
 	if (asciiImages.empty() || asciiImages[0].empty())
 		return;
 
-	//플레이어 렌더
+	//애니메이션 프레임 계산
 	int direction = isRight ? 0 : 50;
 	int animationLevel = 0;
 	if (isRunning) {
@@ -344,12 +332,14 @@ void Player::Move(Vector2 delta)
 	Engine::Get().cameraPos = Engine::Get().cameraPos + delta;
 }
 
+//공격 - 몬스터 이동시키고 데미지 줌
 void Player::Attack(Actor* other)
 {
 	other->Move(isRight ? Vector2(BLOCKSIZE_WIDTH, 0) : Vector2(BLOCKSIZE_WIDTH * (-1), 0));
 	other->OnAttacked(attackDamage);
 }
 
+//피격 - 체력감소
 void Player::OnAttacked(int damage)
 {
 	SetHp(hp - damage);
@@ -361,38 +351,4 @@ void Player::InventoryReset() {
 	}
 	inventory[1] = { ITEM_PICKAXE, 1 };
 	inventory[2] = { ITEM_SWORD, 1 };
-}
-
-void Player::LoadItemsImage()
-{
-	std::ifstream file(itemImageLink);
-	if (!file.is_open()) {
-		std::cerr << "파일을 열 수 없습니다: " << itemImageLink << std::endl;
-		return;
-	}
-
-	std::string line;
-	size_t maxWidth = 0;
-	std::vector<std::string> tempLines;
-
-	// 먼저 줄들을 읽고 최대 너비 구하기
-	while (std::getline(file, line)) {
-		if (line.size() > maxWidth) maxWidth = line.size();
-		tempLines.push_back(line);
-	}
-
-	// 공백으로 패딩하고 image에 저장
-	for (const auto& l : tempLines) {
-		std::vector<char> row;
-		for (size_t i = 0; i < maxWidth; ++i) {
-			if (i < l.size())
-				row.push_back(l[i]);
-			else
-				row.push_back(' ');
-		}
-		itemsImage.push_back(std::move(row));
-	}
-
-	itemsFgColors = std::vector<std::vector<Color>>(itemsImage.size(), std::vector<Color>(itemsImage[0].size(), Color::White));
-	itemsBgColors = std::vector<std::vector<Color>>(itemsImage.size(), std::vector<Color>(itemsImage[0].size(), Color::Black));
 }

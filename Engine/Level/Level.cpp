@@ -16,7 +16,6 @@ Level::~Level()
 		SafeDelete(actor);
 	}
 
-	// @Incomplete: 다른 곳에서도 문제 없는지 확인 필요함.
 	for (Actor* actor : addRequstedActors)
 	{
 		SafeDelete(actor);
@@ -45,7 +44,7 @@ void Level::AddActor(Actor* newActor)
 
 void Level::DestroyActor(Actor* destroyedActor)
 {
-	// 대기 배열에 추가.
+	// 삭제 대기 배열에 추가.
 	destroyRequstedActors.emplace_back(destroyedActor);
 }
 
@@ -92,7 +91,6 @@ void Level::Tick(float deltaTime)
 
 void Level::Render()
 {
-	//actors.erase(std::remove(actors.begin(), actors.end(), nullptr), actors.end());
 	// 그리기 전에 정렬 순서 기준으로 재배치(정렬).
 	SortActorsBySortingOrder();
 
@@ -139,11 +137,11 @@ void Level::Render()
 	}
 
 	// UI 렌더링
-	//for (UIElement* const ui : uiElements)
-	//{
-	//	if (!ui->isVisible) continue;
-	//	ui->Render();
-	//}
+	for (UIElement* const ui : uiElements)
+	{
+		if (!ui->isVisible) continue;
+		ui->Render();
+	}
 
 }
 
@@ -194,19 +192,7 @@ void Level::AddUI(UIElement* newUI)
 
 void Level::SortActorsBySortingOrder()
 {
-	// 버블 정렬.
-	//for (int ix = 0; ix < (int)actors.size(); ++ix)
-	//{
-	//	for (int jx = 0; jx < (int)actors.size() - 1; ++jx)
-	//	{
-	//		// sortingOrder 값이 클수록 뒤 쪽에 배치.
-	//		if (actors[jx]->sortingOrder > actors[jx + 1]->sortingOrder)
-	//		{
-	//			// 두 액터 위치 교환.
-	//			std::swap(actors[jx], actors[jx + 1]);
-	//		}
-	//	}
-	//}
+	//우선순위에 맞게 정렬
 	std::sort(actors.begin(), actors.end(),
 		[](Actor* a, Actor* b) {
 			return a->sortingOrder < b->sortingOrder;

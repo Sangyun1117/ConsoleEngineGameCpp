@@ -7,8 +7,6 @@
 GrassBlock::GrassBlock(int x, int y) : Block(std::string("../Assets/Images/GrassBlock.txt"),Vector2(x,y), ImageManager::Get().GetImage("../Assets/Images/GrassBlock.txt"), ImageManager::Get().GetColor("../Assets/Colors/GrassBlockBgColors.txt"), ImageManager::Get().GetColor("../Assets/Colors/GrassBlockFgColors.txt"))
 {
 	SetItemNum(ITEM_GRASS_BLOCK);
-	//LoadColorsImage(bgColors, bgColorsImageLink);
-	//SetPosition(Vector2(x, y));
 }
 
 GrassBlock::~GrassBlock()

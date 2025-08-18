@@ -6,36 +6,21 @@
 #include "Utils/Utils.h"
 #include "Input.h"
 
-// 정적 변수 초기화.
 Engine* Engine::instance = nullptr;
-bool g_isQuitByConsole = false;//x버튼을 눌렀을 경우 안전하게 종료 위해 사용
 
+//Windows 콘솔 이벤트(종료)가 실행되면 자동으로 호출되는 함수.
 BOOL WINAPI Engine::ConsoleHandler(DWORD signal)
 {
 	if (signal == CTRL_CLOSE_EVENT || signal == CTRL_LOGOFF_EVENT || signal == CTRL_SHUTDOWN_EVENT)
 	{
 		Engine::Get().CleanUp();
-		//g_isQuitByConsole = true;
 
+		//메모리 누수 체크
 		_CrtDumpMemoryLeaks();
 		return TRUE;
 	}
 
 	return FALSE;
-}
-
-BOOL WINAPI ConsoleMessageProcedure(DWORD CtrlType)
-{
-	switch (CtrlType)
-	{
-	case CTRL_CLOSE_EVENT:
-		// Engine의 메모리 해제.
-		//Engine::Get().~Engine();
-		Engine::Get().CleanUp();
-		return false;
-	}
-
-	return false;
 }
 
 Engine::Engine()
@@ -75,10 +60,9 @@ Engine::Engine()
 	ScreenSettings();
 
 	// 콘솔 창 이벤트 등록.
-	//SetConsoleCtrlHandler(ConsoleMessageProcedure, TRUE);
 	SetConsoleCtrlHandler(ConsoleHandler, TRUE);
 
-	//빠른 편집 모드 삭제
+	//빠른 편집 모드 삭제(드래그 방지)
 	DisableQuickEditMode();
 }
 
@@ -102,8 +86,7 @@ void Engine::Run()
 	QueryPerformanceFrequency(&frequency);
 
 	// 타겟 프레임.
-	float targetFrameRate
-		= settings.framerate == 0.0f ? 60.0f : settings.framerate;
+	float targetFrameRate = settings.framerate == 0.0f ? 60.0f : settings.framerate;
 
 	// 타겟 한 프레임 시간.
 	float oneFrameTime = 1.0f / targetFrameRate;
@@ -112,7 +95,7 @@ void Engine::Run()
 	while (true)
 	{
 		// 엔진 종료 여부 확인.
-		if (isQuit || g_isQuitByConsole)
+		if (isQuit)
 		{
 			// 루프 종료.
 			break;
@@ -174,7 +157,7 @@ void Engine::WriteToBuffer(const Vector2& position, const char* image, Color fgC
 
 		int index = (y * settings.width) + x;
 
-		wchar_t wch = static_cast<wchar_t>(image[ix]); // 단순 변환
+		wchar_t wch = static_cast<wchar_t>(image[ix]); //아스키코드 유니코드로 단순 변환
 		imageBuffer[index].Char.UnicodeChar = wch;
 		//imageBuffer[index].Char.AsciiChar = image[ix];
 		imageBuffer[index].Attributes = (WORD)fgColor | ((WORD)bgColor << 4);
@@ -218,6 +201,7 @@ void Engine::WriteToBuffer(
 	}
 }
 
+//한 문장을 받아서 버퍼에 저장(유니코드)
 void Engine::WriteToWcharBuffer(const Vector2& position, const wchar_t* image, Color fgColor, Color bgColor)
 {
 	int length = static_cast<int>(wcslen(image));
@@ -238,6 +222,7 @@ void Engine::WriteToWcharBuffer(const Vector2& position, const wchar_t* image, C
 	}
 }
 
+//레벨 추가, 각 씬을 레벨로 관리
 void Engine::AddLevel(Level* newLevel)
 {
 	// 기존에 있던 레벨은 제거.
@@ -501,13 +486,13 @@ void Engine::ScreenSettings()
 
 
 			// 5. 콘솔창 x버튼 지우기
-			// 현재 윈도우 스타일 값을 가져옵니다.
+			// 현재 윈도우 스타일 값을 가져옴.
 			LONG_PTR style = GetWindowLongPtr(consoleWindow, GWL_STYLE);
 
-			// 제목 표시줄, 크기 조절 테두리, 시스템 메뉴 등의 스타일을 제거합니다.
+			// 제목 표시줄, 크기 조절 테두리, 시스템 메뉴 등의 스타일을 제거
 			style &= ~(WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SYSMENU | WS_VSCROLL | WS_HSCROLL);
 
-			// 변경된 스타일을 다시 적용합니다.
+			// 변경된 스타일 적용
 			SetWindowLongPtr(consoleWindow, GWL_STYLE, style);
 		}
 	}

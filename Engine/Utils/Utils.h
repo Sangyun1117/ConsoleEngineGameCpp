@@ -1,10 +1,9 @@
+// 프로젝트에서 다양하게 사용할 유틸리티 함수 모음.
 #pragma once
-
 #include <Windows.h>
 #include "Math/Vector2.h"
 #include "Math/Color.h"
 
-// 프로젝트에서 다양하게 사용할 유틸리티 함수 모음.
 namespace Utils
 {
 	// 두 값을 서로 바꿀 때 사용하는 함수.

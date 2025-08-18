@@ -1,5 +1,5 @@
+//Actor는 동적객체에서 사용할 함수, 변수를 정의해놓은 클래스
 #pragma once
-
 #include "Core.h"
 #include "Math/Vector2.h"
 #include "Math/Color.h"
@@ -18,8 +18,6 @@ public:
 	Actor(const std::string& imageLink, const Vector2& position, const std::vector<std::vector<char>>& images, const std::vector<std::vector<Color>>& bgs, const std::vector<std::vector<Color>>& fgs);
 	virtual ~Actor();
 
-	// 이벤트 함수.
-
 	// 객체 생애주기(Lifetime)에 1번만 호출됨 (초기화 목적).
 	virtual void BeginPlay();
 
@@ -32,16 +30,19 @@ public:
 	// BeginPlay 호출 여부 확인.
 	inline bool HasBeganPlay() const { return hasBeganPlay; }
 
-	//위치 이동 시키는 함수
+	//데미지 받았을 때 처리 함수
 	virtual void OnAttacked(int damage);
+	//위치 이동 시키는 함수
 	virtual void Move(Vector2 delta);
 	// 위치 설정/값 읽는 함수.
 	void SetPosition(const Vector2& newPosition);
 	void SetPosition(int x, int y);
 	Vector2 GetPosition() const;
+	//크기 관련 함수
 	int GetWidth() { return width; };
 	int GetHeight() { return height; };
 	void SetSize(int w, int h) { width = w; height = h; };
+	//스탯 관련 함수
 	int GetHp() { return hp; };
 	void SetHp(int newHp) { hp = newHp; };
 	// Sorting Order 설정.
@@ -53,10 +54,6 @@ public:
 
 	// 객체 삭제 함수.
 	void Destroy();
-
-	//void InitializeColors();  // 여기서 색상 초기화
-
-	//void LoadColorsImage(std::vector<std::vector<Color>>& colorGrid, const std::string& filePath);
 
 	bool isIntersect(Vector2 myIntersectTL, Vector2 myIntersectBR, Vector2 otherRangeTR, Vector2 otherRangeBR);
 
@@ -78,16 +75,13 @@ protected:
 	int height = 0;
 	int hp = 100;
 
-	//이미지 (아스키 아트)
-	//std::vector<std::string> image;
-	//std::vector<std::vector<char>>image;
-	//std::vector<std::vector<Color>>fgColors;
-	//std::vector<std::vector<Color>>bgColors;
+	//이미지 아스키 아트, 전경색, 배경색, 경로
 	const std::vector<std::vector<char>>& asciiImages;
 	const std::vector<std::vector<Color>>& fgs;
 	const std::vector<std::vector<Color>>& bgs;
 	std::string imageLink;
 
+	//액션레벨에 따라 보여지는 이미지, 행동 등에 사용
 	int actionLevel = 0;
 
 	// BeginPlay 호출이 되었는지 확인.

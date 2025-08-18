@@ -7,7 +7,7 @@
 #include "Utils/Utils.h"
 Ghost::Ghost(int x, int y) : Actor(std::string("../Assets/Images/Ghost.txt"), Vector2(x, y), ImageManager::Get().GetImage("../Assets/Images/Ghost.txt"), ImageManager::Get().GetColor("../Assets/Colors/GhostColors.txt"), ImageManager::Get().GetColor("../Assets/Colors/GhostColors.txt")) {
 	SetSize(GHOST_WIDTH, GHOST_HEIGHT);
-	//SetPosition(Vector2(x, y));
+	//좌표를 float형으로 바꿔서 자연스럽게 움직일 수 있도록 함
 	xTemp = (float)x;
 	yTemp = (float)y;
 	SetSortingOrder(15);
@@ -20,14 +20,18 @@ void Ghost::Tick(float deltaTime) {
 	if (!mygl)
 		return;
 
+	//플레이어와 몬스터의 위치 계산
 	Vector2 playerLeftTop = mygl->GetPlayerPosition();
 	Vector2 playerCenter = Vector2(playerLeftTop.x + (PLAYER_WIDTH / 2), playerLeftTop.y + (PLAYER_HEIGHT / 2));
 	Vector2 ghostCenter = Vector2(position.x + (GHOST_WIDTH / 2), position.y + (GHOST_HEIGHT / 2));
+	
+	//플레이어를 바라보는 방향으로 설정
 	if (playerCenter.x > ghostCenter.x)
 		isRight = true;
 	else
 		isRight = false;
 
+	//피격 시간 계산
 	if (isHit) {
 		if (hitTimer >= hitDuration) {
 			isHit = false;
@@ -38,19 +42,20 @@ void Ghost::Tick(float deltaTime) {
 		return;
 	}
 
+	//공격 시간 계산 - 공격 모션이 끝나고 공격. 
 	if (isAttack) {
 		if (attackTimer >= attackDuration) {
 			isAttack = false;
 			attackTimer = 0.0f;
 			for (Actor* other : mygl->GetActors()) {
-				if (other == this)
+				if (!other->Is(Player::TypeIdClass())) //플레이어인지 확인
 					continue;
 				Vector2 myTL = isRight ? Vector2(position.x + width - BLOCKSIZE_WIDTH / 2, position.y) : Vector2(position.x - BLOCKSIZE_WIDTH / 2, position.y);
 				Vector2 myBR = isRight ? Vector2(position.x + width + BLOCKSIZE_WIDTH / 2, position.y + height) : Vector2(position.x + BLOCKSIZE_WIDTH / 2, position.y + height);
 				Vector2 otherTL = other->GetPosition();
 				Vector2 otherBR = { other->GetPosition().x + other->GetWidth(), other->GetPosition().y + other->GetHeight() };
 
-				if (isIntersect(myTL, myBR, otherTL, otherBR))
+				if (isIntersect(myTL, myBR, otherTL, otherBR))//공격범위와 겹치면 공격
 					Attack(other);
 			}
 		}
@@ -58,6 +63,7 @@ void Ghost::Tick(float deltaTime) {
 		return;
 	}
 
+	//공격 후 대기시간 계산
 	if (!canAttack) {
 		cooldownTimer += deltaTime;
 		if (cooldownTimer >= cooldownDuration) {
@@ -70,6 +76,7 @@ void Ghost::Tick(float deltaTime) {
 	int xRange = BLOCKSIZE_WIDTH;
 	int yRange = BLOCKSIZE_HEIGHT;
 
+	//공격범위에 플레이어가 있으면 공격하고 아니면 이동함.
 	if (xRange >= abs(ghostCenter.x - playerCenter.x) && yRange >= abs(ghostCenter.y - playerCenter.y)) {
 		if (canAttack) {
 			isAttack = true;
@@ -77,9 +84,6 @@ void Ghost::Tick(float deltaTime) {
 		}
 	}
 	else {
-		// 이동 속도
-		//float moveSpeed = 2.5f; // 속도는 상황에 맞게 조절
-
 		// 유령 중심 기준으로 방향 계산 (정규화된 벡터)
 		float dx = (float)(playerCenter.x - ghostCenter.x);
 		float dy = (float)(playerCenter.y - ghostCenter.y);
@@ -121,7 +125,7 @@ void Ghost::Render() {
 	if (asciiImages.empty() || asciiImages[0].empty())
 		return;
 
-	//플레이어 렌더
+	//애니메이션 프레임 계산
 	int direction = isRight ? 0 : 30;
 	int animationLevel = isAttack ? 15 : 0;
 
@@ -138,6 +142,7 @@ void Ghost::Move(Vector2 delta) {
 	position = position + delta;
 }
 
+//공격 - 플레이어를 이동시키고 데미지 줌
 void Ghost::Attack(Actor* other) {
 	Player* player = other->As<Player>();
 	if (player) {
@@ -147,6 +152,7 @@ void Ghost::Attack(Actor* other) {
 	}
 }
 
+//피격 - hp하락
 void Ghost::OnAttacked(int damage)
 {
 	isHit = true;

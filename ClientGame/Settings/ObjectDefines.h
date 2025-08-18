@@ -1,5 +1,7 @@
+//오브젝트 수치 정의
 #pragma once
 
+//레벨
 #define LEVEL_NUM_HOME 0
 #define LEVEL_NUM_GAME 1
 #define LEVEL_NUM_MENU 2
@@ -24,6 +26,6 @@
 #define ITEM_GRASS_BLOCK 3
 #define ITEM_GROUND_BLOCK 4
 
-//UI
+//UI 위치
 #define InventoryX 30
 #define InventoryY 33

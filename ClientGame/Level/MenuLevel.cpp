@@ -13,6 +13,27 @@ MenuLevel::MenuLevel()
 
 	//아이템 수 미리 저장
 	length = static_cast<int>(items.size());
+
+	// 메뉴 타이틀 로딩
+	titleImage = &ImageManager::Get().GetImage("../Assets/Images/MenuTitle.txt");
+	titleFgs = &ImageManager::Get().GetColor("../Assets/Colors/MenuTitleColors.txt");
+	titleBgs = &ImageManager::Get().GetColor("../Assets/Colors/MenuTitleColors.txt");
+
+	//버튼 기본 문자열
+	const wchar_t* startLine = L"         GAME RESUME         ";
+	const wchar_t* exitLine =  L"            HOME             ";
+
+	//버튼 중앙 좌표 계산
+	int textLength = static_cast<int>(wcslen(startLine));
+	int startX = (Engine::Get().GetScreenWidth() - textLength) / 2;
+	int startY = Engine::Get().GetScreenHeight() - 12;
+
+	// 좌표 저장
+	gameResumeButtonLeftTopXY = { startX, startY };
+	gameResumeButtonRightBottomXY = { startX + textLength, startY + 2 };
+
+	homeButtonLeftTopXY = { startX, startY + 3 };
+	homeButtonRightBottomXY = { startX + textLength, startY + 5 };
 }
 
 MenuLevel::~MenuLevel()
@@ -32,17 +53,17 @@ void MenuLevel::Tick(float deltaTime)
 	}
 
 	//마우스가 버튼 위에 있는지 확인
-	isHoverGameStart = Input::Get().IsMouseOver(gameStartButtonLeftTopXY, gameStartButtonRightBottomXY);
-	isHoverExit = Input::Get().IsMouseOver(exitButtonLeftTopXY, exitButtonRightBottomXY);
+	isHoverGameStart = Input::Get().IsMouseOver(gameResumeButtonLeftTopXY, gameResumeButtonRightBottomXY);
+	isHoverExit = Input::Get().IsMouseOver(homeButtonLeftTopXY, homeButtonRightBottomXY);
 	//마우스 입력 처리
 	if (Input::Get().GetMouseLeftDown() &&
-		Input::Get().IsMouseOver(gameStartButtonLeftTopXY, gameStartButtonRightBottomXY))
+		Input::Get().IsMouseOver(gameResumeButtonLeftTopXY, gameResumeButtonRightBottomXY))
 	{
 		items[0]->onSelected();
 	}
 
 	if (Input::Get().GetMouseLeftDown() &&
-		Input::Get().IsMouseOver(exitButtonLeftTopXY, exitButtonRightBottomXY))
+		Input::Get().IsMouseOver(homeButtonLeftTopXY, homeButtonRightBottomXY))
 	{
 		items[1]->onSelected();
 	}
@@ -50,80 +71,51 @@ void MenuLevel::Tick(float deltaTime)
 
 void MenuLevel::Render()
 {
-	//메뉴 제목 출력
-	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 	//배경
 	SettingBackground();
 	//Main Title
-	const std::vector<std::vector<char>>& asciiImages = ImageManager::Get().GetImage("../Assets/Images/MainTitle.txt");
-	const std::vector<std::vector<Color>>& fgs = ImageManager::Get().GetColor("../Assets/Colors/MainTitleColors.txt");
-	const std::vector<std::vector<Color>>& bgs = ImageManager::Get().GetColor("../Assets/Colors/MainTitleColors.txt");
 
-	Engine::Get().WriteToBuffer(Vector2(10, 5), asciiImages, fgs, bgs);
+	Engine::Get().WriteToBuffer(Vector2(25, 5), *titleImage, *titleFgs, *titleBgs);
 
-	//const wchar_t* topLine =   L"                              ";
-	//const wchar_t* underLine = L"                              ";
 	const wchar_t* startLine = isHoverGameStart ? L"     ➡️  GAME RESUME         " : L"         GAME RESUME         ";
 	const wchar_t* exitLine = isHoverExit ?       L"        ➡️   HOME            " : L"             HOME            ";
 
-	// 중앙값 좌표 구하기
-	int textLength = static_cast<int>(wcslen(startLine));
-	int startX = (Engine::Get().GetScreenWidth() - textLength) / 2;
-	int startY = Engine::Get().GetScreenHeight() - 12;
-
-	//버튼 좌표 저장
-	gameStartButtonLeftTopXY.x = startX;
-	gameStartButtonLeftTopXY.y = startY;
-	gameStartButtonRightBottomXY.x = startX + wcslen(startLine);
-	gameStartButtonRightBottomXY.y = startY + 2;
-
 	// 메뉴 아이템 렌더링.
 	Color buttonTextColor = isHoverGameStart ? Color::Red : Color::Black;
-	Color buttonBackgroundColor = Color::BrightYellow;
-	//Engine::Get().WriteToWcharBuffer({ startX, startY }, topLine, buttonTextColor, buttonBackgroundColor);
-	Engine::Get().WriteToWcharBuffer({ startX, startY + 1 }, startLine, buttonTextColor, buttonBackgroundColor);
-	//Engine::Get().WriteToWcharBuffer({ startX, startY+2 }, underLine, buttonTextColor, buttonBackgroundColor);
+	Engine::Get().WriteToWcharBuffer(
+		{ gameResumeButtonLeftTopXY.x, gameResumeButtonLeftTopXY.y + 1 },
+		startLine, buttonTextColor, Color::BrightCyan
+	);
 
-	startY += 3;//y값 올려서 버튼 간의 간격 조절
-
-	//버튼 좌표 저장
-	exitButtonLeftTopXY.x = startX;
-	exitButtonLeftTopXY.y = startY;
-	exitButtonRightBottomXY.x = startX + wcslen(exitLine);
-	exitButtonRightBottomXY.y = startY + 2;
-
-	// 메뉴 아이템 렌더링.
 	buttonTextColor = isHoverExit ? Color::Yellow : Color::Black;
-	buttonBackgroundColor = Color::BrightYellow;
-	//Engine::Get().WriteToWcharBuffer({ startX, startY }, topLine, buttonTextColor, buttonBackgroundColor);
-	Engine::Get().WriteToWcharBuffer({ startX, startY + 1 }, exitLine, buttonTextColor, buttonBackgroundColor);
-	//Engine::Get().WriteToWcharBuffer({ startX, startY+2 }, underLine, buttonTextColor, buttonBackgroundColor);
-
+	Engine::Get().WriteToWcharBuffer(
+		{ homeButtonLeftTopXY.x, homeButtonLeftTopXY.y + 1 },
+		exitLine, buttonTextColor, Color::BrightCyan
+	);
 }
 
 void MenuLevel::SettingBackground() {
-	WORD backgoroundColor = BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_INTENSITY;
+	WORD backgroundColor = BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_INTENSITY;
 
 	int screenWidth = Engine::Get().GetScreenWidth();
 	int screenHeight = Engine::Get().GetScreenHeight();
-	int groundLine = 55;
 	for (int y = 0; y < Engine::Get().GetScreenHeight(); ++y)
 	{
 		for (int x = 0; x < screenWidth; ++x)
 		{
 			CHAR_INFO& buffer = Engine::Get().imageBuffer[(y * (screenWidth)) + x];
 			buffer.Char.UnicodeChar = ' ';
-			buffer.Attributes = backgoroundColor;
+			buffer.Attributes = backgroundColor;
 		}
 
 		// 각 줄 끝에 개행 문자 추가.
 		CHAR_INFO& buffer = Engine::Get().imageBuffer[(y * (screenWidth)) + screenWidth];
 		buffer.Char.UnicodeChar = '\n';
-		buffer.Attributes = backgoroundColor;
+		buffer.Attributes = backgroundColor;
 	}
 
 	// 마지막에 널 문자 추가.
 	CHAR_INFO& buffer = Engine::Get().imageBuffer[(screenWidth)*screenHeight];
 	buffer.Char.UnicodeChar = '\0';
-	buffer.Attributes = backgoroundColor;
+	buffer.Attributes = backgroundColor;
 }

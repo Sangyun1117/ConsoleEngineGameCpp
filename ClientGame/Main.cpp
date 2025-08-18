@@ -3,12 +3,8 @@
 #include "Game/Game.h"
 
 int main() {
-
+	//메모리릭 검출코드
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-
-	//SetConsoleCtrlHandler(Engine::ConsoleHandler, TRUE);
-
-	//int* x = new int(4);
 
 	Game game;
 	game.Run();

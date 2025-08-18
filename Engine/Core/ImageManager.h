@@ -1,3 +1,14 @@
+/******************************************************************************
+ * ImageManager.h
+ *
+ * 모든 이미지 파일을 관리하는 클래스
+ *
+ * 이미지와 컬러파일은 모두 텍스트파일로 관리된다.
+ * 이미지는 아스키코드로 저장되어짐
+ * 컬러파일은 0~15까지 16진수로 저장되어서 사용됨.
+ * 해시테이블을 이용해 이미지 경로로 특정 이미지와 컬러에 접근가능하다.
+ *
+ ******************************************************************************/
 #pragma once
 #include <iostream>
 #include <fstream>
@@ -21,6 +32,7 @@ public:
 		return normalized;
 	}
 
+	//경로에 있는 폴더를 읽음. 이미지와 컬러를 구분해서 저장하는데 하드코딩이라 수정필요
 	bool LoadImagesFromFolder(const std::string& imageFolderPath, const std::string& colorFolderPath) {
 		bool allLoaded = true;
 
@@ -46,36 +58,6 @@ public:
 
 		return allLoaded;
 	}
-
-	// 하드코딩된 이미지 로드
-	//bool LoadHardcodedImages() {
-	//	// 하드코딩된 이미지 경로 목록
-	//	const std::vector<std::string> imagePaths = {
-	//		"../Assets/Images/AmongUs.txt",
-	//		"../Assets/Images/Item.txt",
-	//		"../Assets/Images/GrassBlock.txt"
-	//	};
-
-	//	const std::vector<std::string> colorPaths = {
-	//		"../Assets/Colors/PlayerFgColors.txt",
-	//		"../Assets/Colors/GrassBlockBgColors.txt",
-	//	};
-
-	//	bool allLoaded = true;
-	//	for (const auto& path : imagePaths) {
-	//		if (!LoadImage(path)) {
-	//			allLoaded = false;
-	//		}
-	//	}
-
-	//	for (const auto& path : colorPaths) {
-	//		if (!LoadColor(path)) {
-	//			allLoaded = false;
-	//		}
-	//	}
-
-	//	return allLoaded;
-	//}
 
 	// 특정 이미지 파일 로드
 	bool LoadImage(const std::string& filePath) {
@@ -117,10 +99,10 @@ private:
 	ImageManager(const ImageManager&) = delete;
 	ImageManager& operator=(const ImageManager&) = delete;
 
-	// 텍스트 파일 로드
+	// 텍스트 파일(이미지) 로드
 	std::vector<std::vector<char>> LoadTextFile(const std::string& filePath) {
 		std::ifstream file(filePath);
-		std::vector<std::vector<char>> result;  // ← 여기에 저장하고 리턴
+		std::vector<std::vector<char>> result;  //여기에 저장하고 리턴
 
 		if (!file.is_open()) {
 			std::cerr << "파일을 열 수 없습니다: " << filePath << std::endl;
@@ -152,7 +134,7 @@ private:
 		return result;
 	}
 
-	//컬러 텍스트 파일 로드
+	//텍스트 파일(컬러) 로드
 	std::vector<std::vector<Color>> LoadColorsImage(const std::string& filePath)
 	{
 		std::ifstream file(filePath);

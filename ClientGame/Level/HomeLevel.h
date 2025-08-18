@@ -1,12 +1,14 @@
+//홈레벨은 게임시작 화면 입니다.
+//start를 누르면 게임화면으로 이동하고 exit나 esc를 누르면 프로그램을 종료합니다.
 #pragma once
 #include "Level/Level.h"
 #include "Math/Color.h"
 #include "Math/Vector2.h"
 #include <vector>
 
+//홈 화면 메뉴
 struct HomeMenuItem
 {
-	//함수 포인터 선언
 	typedef void (*OnSelected)();
 
 	HomeMenuItem(const char* text, OnSelected onSelected) : onSelected(onSelected) {
@@ -34,7 +36,9 @@ public:
 
 	virtual void Tick(float deltaTime) override;
 	virtual void Render() override;
-
+private:
+	//배경 설정
+	void SettingBackground();
 private:
 	//아이템 선택 색상
 	bool isHoverGameStart = false;
@@ -46,13 +50,19 @@ private:
 	Color unselectedBagroundColor = Color::Gray;
 	//아아템 배열
 	std::vector<HomeMenuItem*> items;
-	void SettingBackground();
 	//메뉴 아이템 수
 	int length = 0;
 
+	//버튼 위치
 	Vector2 gameStartButtonLeftTopXY;
 	Vector2 gameStartButtonRightBottomXY;
 	Vector2 exitButtonLeftTopXY;
 	Vector2 exitButtonRightBottomXY;
+
+	//메인 타이틀
+	const std::vector<std::vector<char>>* titleImage = nullptr;
+	const std::vector<std::vector<Color>>* titleFgs = nullptr;
+	const std::vector<std::vector<Color>>* titleBgs = nullptr;
+
 };
 

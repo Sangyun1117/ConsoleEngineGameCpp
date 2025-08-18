@@ -1,3 +1,4 @@
+//UIElement는 UI를 표현하기 위한 클래스
 #pragma once
 #include "Engine.h"
 #include "RTTI.h"

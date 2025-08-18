@@ -1,5 +1,5 @@
+//Level은 게임에서 하나의 독립적인 공간 단위
 #pragma once
-
 #include "Core.h"
 #include <vector>	// 크기가 알아서 변경되는 동적 배열.
 #include "RTTI.h"
@@ -32,6 +32,7 @@ public:
 	//UI추가 함수
 	void AddUI(UIElement* newUI);
 protected:
+	//액터 정렬 함수
 	void SortActorsBySortingOrder();
 
 protected:

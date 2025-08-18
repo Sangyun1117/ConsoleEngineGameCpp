@@ -28,10 +28,7 @@ void Block::Render()
 	// 화면 밖이면 아예 그리지 않음(필요시 영역 검사)
 	if (blockPos.x >= Engine::Get().GetScreenWidth() || blockPos.y >= Engine::Get().GetScreenHeight())
 		return;
-
-	// 필요한 경우 그릴 영역(예: 화면 밖 부분 제외)만 잘라서 넘길 수도 있음.
-	// 지금은 그냥 전체 다 넘긴다고 가정.
-
+	//버퍼에 저장
 	Engine::Get().WriteToBuffer(blockPos, asciiImages, fgs, bgs);
 }
 

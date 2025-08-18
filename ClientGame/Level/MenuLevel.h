@@ -1,10 +1,13 @@
+//메뉴레벨은 게임 진행 중 들어갈 수 있는 설정화면입니다.
+//resume이나 esc을 누르면 다시 게임화면으로 돌아가고 home을 누르면 게임을 종료하고 홈화면으로 이동합니다.
 #pragma once
 #include "Level/Level.h"
 #include "Math/Color.h"
 #include "Math/Vector2.h"
 #include <vector>
+
+//메뉴 화면 메뉴
 struct MenuMenuItem {
-	//함수 포인터 선언
 	typedef void (*OnSelected)();
 
 	MenuMenuItem(const char* text, OnSelected onSelected) : onSelected(onSelected) {
@@ -31,7 +34,9 @@ public:
 
 	virtual void Tick(float deltaTime) override;
 	virtual void Render() override;
-
+private:
+	//배경 설정
+	void SettingBackground();
 private:
 	//아이템 선택 색상
 	bool isHoverGameStart = false;
@@ -43,12 +48,17 @@ private:
 	Color unselectedBagroundColor = Color::Gray;
 	//아아템 배열
 	std::vector<MenuMenuItem*> items;
-	void SettingBackground();
 	//메뉴 아이템 수
 	int length = 0;
 
-	Vector2 gameStartButtonLeftTopXY;
-	Vector2 gameStartButtonRightBottomXY;
-	Vector2 exitButtonLeftTopXY;
-	Vector2 exitButtonRightBottomXY;
+	//버튼 위치
+	Vector2 gameResumeButtonLeftTopXY;
+	Vector2 gameResumeButtonRightBottomXY;
+	Vector2 homeButtonLeftTopXY;
+	Vector2 homeButtonRightBottomXY;
+
+	//메뉴 타이틀
+	const std::vector<std::vector<char>>* titleImage = nullptr;
+	const std::vector<std::vector<Color>>* titleFgs = nullptr;
+	const std::vector<std::vector<Color>>* titleBgs = nullptr;
 };

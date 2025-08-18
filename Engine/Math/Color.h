@@ -21,7 +21,7 @@ enum class Color : int
     White = 15,
     Transparent = -1
 };
-
+//16진수를 컬러로 매핑
 inline Color ConvertHexCharToColor(char c) //함수 중복을 피하기 위해 inline 선언
 {
     switch (toupper(c))

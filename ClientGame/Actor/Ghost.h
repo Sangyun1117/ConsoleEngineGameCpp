@@ -1,18 +1,23 @@
+//고스트(몬스터)의 행동과 렌더링을 정의한 클래스
 #pragma once
 #include "Actor/Actor.h"
 #include "Settings/ObjectDefines.h"
+
 class Ghost : public Actor {
 	RTTI_DECLARATIONS(Ghost, Actor)
 public:
 	Ghost(int x = 0, int y = 0);
+	//게임루프
 	virtual void Tick(float deltaTime) override;
 	virtual void Render() override;
+	//이동
 	void Move(Vector2 delta) override;
 private:
+	//전투
 	void Attack(Actor* other);
 	void OnAttacked(int damage);
 private:
-	//능력
+	//이동과 관련한 변수
 	float moveSpeed = 0.2f; //이동속도
 	float xTemp = 0.0f;
 	float yTemp = 0.0f;
@@ -35,7 +40,6 @@ private:
 
 	//캐릭터 공격
 	int attackDamage = 50;
-
 	float attackTimer = 0.0f;  // 액션 지속 시간 타이머
 	float attackDuration = 0.5f;
 	bool isAttack = false;

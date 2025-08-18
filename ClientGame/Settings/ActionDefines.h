@@ -1,3 +1,4 @@
+//액션 시 애니메이션 위치 정의
 #pragma once
 
 #define ACTION_IDLE     0

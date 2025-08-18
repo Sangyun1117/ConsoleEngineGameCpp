@@ -3,7 +3,7 @@
 #include "Level/HomeLevel.h"
 #include "Level/MenuLevel.h"
 #include "Core/ImageManager.h"
-//#include "Utils/Utils.h"
+
 Game::Game()
 {
     // 이미지 매니저 가져오기
@@ -12,12 +12,9 @@ Game::Game()
     if (!imgMgr.LoadImagesFromFolder("../Assets/Images", "../Assets/Colors")) {
         std::cerr << "일부 이미지 로드 실패!\n";
     }
-    //if (!imgMgr.LoadHardcodedImages()) {
-    //    std::cerr << "일부 이미지 로드 실패!\n";
-    //}
 
 	instance = this;
-    //AddLevel(new GameLevel());
+
     homeLevel = new HomeLevel();
     gameLevel = new GameLevel();
     menuLevel = new MenuLevel();
@@ -30,6 +27,7 @@ Game::~Game()
 	CleanUp();
 }
 
+//레벨 변경
 void Game::ChangeLevel(int changeLevel)
 {
     nowLevel = changeLevel;
@@ -49,26 +47,7 @@ void Game::ChangeLevel(int changeLevel)
     }
 }
 
-//void Game::ToggleMenu()
-//{
-//    // 토글 처리.
-//    showHome = !showHome;
-//
-//    if (showHome)
-//    {
-//        // 게임 레벨을 뒤로 밀기.
-//        backLevel = mainLevel;
-//
-//        // 메뉴 레벨을 메인 레벨로 설정.
-//        mainLevel = menuLevel;
-//    }
-//    else
-//    {
-//        // 게임 레벨을 메인 레벨로 설정.
-//        mainLevel = backLevel;
-//    }
-//}
-
+//정리
 void Game::CleanUp()
 {
     SafeDelete(homeLevel);
@@ -78,30 +57,11 @@ void Game::CleanUp()
     gameLevel = nullptr;
     menuLevel = nullptr;
     mainLevel = nullptr;
-	//if (showHome)
- //   {
-	//	//게임 레벨 제거
-	//	SafeDelete(backLevel);
- //       SafeDelete(mainLevel);
-	//	mainLevel = nullptr;
-	//}
- //   else
- //   {
- //       mainLevel = nullptr;
- //       SafeDelete(backLevel);
- //       SafeDelete(menuLevel);
- //       menuLevel = nullptr;
- //   }
-
-	//SafeDelete(menuLevel);
-    //mainLevel = nullptr;
-	//Engine::CleanUp();
 }
 
+//레벨 종료
 void Game::QuitLevel(int deleteLevel, int nextLevel)
 {
-
-    
     switch (deleteLevel) {
     case LEVEL_NUM_HOME:
         SafeDelete(homeLevel);
@@ -133,8 +93,4 @@ void Game::QuitLevel(int deleteLevel, int nextLevel)
     }
 
     nowLevel = nextLevel;
-    //showHome = true;
-    //mainLevel = menuLevel;
-    //SafeDelete(backLevel);
-    //backLevel = new GameLevel();
 }

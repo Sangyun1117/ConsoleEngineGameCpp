@@ -1,5 +1,5 @@
+// 2차원 벡터(정수형 x, y 좌표)를 표현하는 클래스.
 #pragma once
-
 #include "Core.h"
 #include <Windows.h>
 

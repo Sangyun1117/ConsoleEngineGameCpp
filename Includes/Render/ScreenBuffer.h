@@ -1,5 +1,8 @@
+// ScreenBuffer 클래스
+// 콘솔 환경에서 더블 버퍼링(Double Buffering)을 구현하기 위한 클래스.
+// 문자열/문자 정보(CHAR_INFO)를 버퍼에 기록한 뒤, 최종적으로 콘솔에 출력.
+// 깜빡임 없는 화면 갱신을 위해 사용.
 #pragma once
-
 #include <Windows.h>
 #include "Math/Vector2.h"
 
