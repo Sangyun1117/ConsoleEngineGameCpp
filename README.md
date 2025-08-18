@@ -4,6 +4,15 @@
 
 ---
 
+## 🖼️ 데모 / 스크린샷
+### ⛏️ 건축<br>
+![Image](https://github.com/user-attachments/assets/bba67935-1797-445e-9dac-11c442a59111)
+![Image](https://github.com/user-attachments/assets/481b02e6-2021-482f-9bad-e2d71686b9a6)<br>
+### ⚔️ 전투<br>
+![Image](https://github.com/user-attachments/assets/d2ce1554-e098-4c45-9e3d-970feab75a50)
+
+---
+
 ## 📜 소개
 이 프로젝트는 샌드박스 게임 Terraria에서 영감을 받아 제작한 **콘솔 기반 샌드박스 게임**입니다.  
 Window콘솔창으로 전투, 탐험, 건축 등을 즐길 수 있습니다.
@@ -15,15 +24,6 @@ Window콘솔창으로 전투, 탐험, 건축 등을 즐길 수 있습니다.
 - 개발 도구: Visual Studio 2022  
 - 프로그래밍 언어: C++  
 - 운영체제: Windows 11
-
----
-
-## 🖼️ 데모 / 스크린샷
-### ⛏️ 건축<br>
-![Image](https://github.com/user-attachments/assets/bba67935-1797-445e-9dac-11c442a59111)
-![Image](https://github.com/user-attachments/assets/481b02e6-2021-482f-9bad-e2d71686b9a6)<br>
-### ⚔️ 전투<br>
-![Image](https://github.com/user-attachments/assets/d2ce1554-e098-4c45-9e3d-970feab75a50)
 
 ---
 
@@ -93,3 +93,6 @@ https://github.com/Sangyun1117/Terraria-ConsoleEngine/releases/download/v1.0.0/C
 - 미니맵
 
 - 맵 에디터 기능
+
+## 📄 프로젝트 문서 (Notion)
+[🔗 노션 페이지](https://www.notion.so/C-2423bd2b36e2808c8fafceb6bb81a479)
